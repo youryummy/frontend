@@ -12,7 +12,12 @@ const MyApp = ({ Component, pageProps }) => {
       <PersistGate persistor={persistor}>
         <Stack direction="row" maxWidth={"100%"}>
           <Menu></Menu>
-          <Box bgcolor={"#F9FAFA"} height={"100vh"} width={"100%"}>
+          <Box
+            bgcolor={"#F9FAFA"}
+            height={"100vh"}
+            width={"100%"}
+            style={{ maxHeight: "100vh", overflowY: "auto" }}
+          >
             <Component {...pageProps} />
           </Box>
         </Stack>
