@@ -3,7 +3,7 @@ import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { tokenExchange, syncWithCalendar } from "./api";
+import { tokenExchange, syncWithCalendar, loginWithGoogle } from "./api";
 import { events } from "./utils/events";
 import CachedIcon from "@mui/icons-material/Cached";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -19,11 +19,12 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Planner() {
   const [groupedEvents, setGroupedEvents] = useState({});
-  const [accessToken, setAccessToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
+  const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    const groupedEventsByDay = events.reduce((acc, event) => {
+    //TODO events should be fetched from the backend and have to contain the events from today and if the user is logged in
+    setIsLogged(events["logged"]);
+    const groupedEventsByDay = events["events"].reduce((acc, event) => {
       const date = new Date(event.timestamp * 1000).toDateString();
       if (!acc[date]) {
         acc[date] = [];
@@ -45,9 +46,12 @@ export default function Planner() {
 
   const getAccessAndRefreshToken = async (code) => {
     const response = await tokenExchange(code);
-    setAccessToken(response.data.access_token);
-    setRefreshToken(response.data.refresh_token);
+    let refreshToken = response.data.refresh_token;
     window.history.replaceState({}, document.title, "/planner");
+    let res = loginWithGoogle(refreshToken);
+    if (res) {
+      setIsLogged(true);
+    }
   };
 
   const getOauth2Code = () => {
@@ -57,33 +61,42 @@ export default function Planner() {
 
   const syncEvent = async () => {
     const response = await syncWithCalendar(
-      "5be96d98f1e34bcd962b1ee43fdc8af0",
+      "228ca39118e14db3906b72e8dc0ec11c",
       "1633043200",
-      true,
-      accessToken,
-      refreshToken
+      true
     );
   };
 
   return (
     <>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-          padding: "20px",
-        }}
-      >
-        <Button
-          onClick={getOauth2Code}
-          style={{ backgroundColor: "#772318" }}
-          variant="contained"
+      {!isLogged ? (
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end",
+            padding: "20px",
+          }}
         >
-          Login with Google
-          <GoogleIcon style={{ marginLeft: "5px" }} />
-        </Button>
-      </div>
+          <Tooltip
+            title="Login with Google to sync your events with your calendar"
+            arrow
+            placement="top"
+          >
+            <Button
+              onClick={getOauth2Code}
+              style={{ backgroundColor: "#772318" }}
+              variant="contained"
+              disabled={isLogged}
+            >
+              Login with Google
+              <GoogleIcon style={{ marginLeft: "5px" }} />
+            </Button>
+          </Tooltip>
+        </div>
+      ) :
+        ""
+      }
       {Object.keys(groupedEvents).map((date, id) => (
         <Grid item xs={12} padding={"20px"} key={id}>
           <h1>{date}</h1>
@@ -102,16 +115,20 @@ export default function Planner() {
                       justifyContent: "flex-end",
                     }}
                   >
-                    <Tooltip
-                      title="Syncronize this event with Google Calendar"
-                      arrow
-                      placement="top"
-                    >
-                      <Button onClick={syncEvent} style={{ color: "#772318" }}>
-                        Sync
-                        <CachedIcon />
-                      </Button>
-                    </Tooltip>
+                    {isLogged ? (
+                      <Tooltip
+                        title="Syncronize this event with Google Calendar"
+                        arrow
+                        placement="top"
+                      >
+                        <Button onClick={syncEvent} style={{ color: "#772318" }}>
+                          Sync
+                          <CachedIcon />
+                        </Button>
+                      </Tooltip>
+                    ) :
+                      ""
+                    }
                   </div>
                   <h2>{event.recipe.name}</h2>
                   <p>{event.recipe.description}</p>

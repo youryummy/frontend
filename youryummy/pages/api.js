@@ -46,3 +46,11 @@ export async function syncWithCalendar(
   };
   return await apiPut(endpoint, body);
 }
+
+export async function loginWithGoogle(refreshToken) {
+  const endpoint = "events/login";
+  let body = {
+    refreshToken: refreshToken,
+  };
+  return await apiPost(endpoint, body);
+}
