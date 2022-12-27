@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { tokenExchange, syncWithCalendar, loginWithGoogle } from "./api";
-import { events } from "./utils/events";
+import {events} from "./utils/events";
 import CachedIcon from "@mui/icons-material/Cached";
 import GoogleIcon from "@mui/icons-material/Google";
 import Tooltip from "@mui/material/Tooltip";
@@ -23,7 +23,7 @@ export default function Planner() {
 
   useEffect(() => {
     //TODO events should be fetched from the backend and have to contain the events from today and if the user is logged in
-    setIsLogged(events["logged"]);
+    setIsLogged(events["isLogged"]);
     const groupedEventsByDay = events["events"].reduce((acc, event) => {
       const date = new Date(event.timestamp * 1000).toDateString();
       if (!acc[date]) {

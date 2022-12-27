@@ -1,5 +1,5 @@
-export const events = {
-  logged: false,
+const events = {
+  isLogged: true,
   events: [
     {
       id: 1,
@@ -94,3 +94,5 @@ export const events = {
     },
   ],
 }
+
+export { events }

@@ -48,7 +48,7 @@ export async function syncWithCalendar(
 }
 
 export async function loginWithGoogle(refreshToken) {
-  const endpoint = "events/login";
+  const endpoint = "events/sync";
   let body = {
     refreshToken: refreshToken,
   };
