@@ -1,9 +1,6 @@
 import { Html, Head, Main, NextScript } from 'next/document'
-import CookieConsent, { Cookies } from "react-cookie-consent";
-import { useState } from "react";
 
 export default function Document() {
-    const [showCookieConsent, setShowCookieConsent] = useState((Cookies.get("CookieConsent") === "true") ? "hidden" : "show");
     return (
         <Html>
         <Head>
@@ -19,16 +16,6 @@ export default function Document() {
             <NextScript />
         </body>
         <footer>
-            <CookieConsent
-            visible={showCookieConsent}
-            style={{ background: "#772318" }}
-            buttonText="Acepto"
-            buttonStyle={{ backgroundColor: 'white' }}
-            expires={150}
-            hideOnAccept
-            onAccept={() => setShowCookieConsent("hidden")}>
-            Esta web utiliza cookies para mejorar su experiencia de navegación. Consulte los <a href="/about/terms"><b>términos del servicio</b></a> para más información. Si continúa navegando, consideramos que acepta su uso.
-            </CookieConsent>
         </footer>
         </Html>
     )

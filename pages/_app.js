@@ -10,14 +10,26 @@ import { PersistGate } from "redux-persist/integration/react";
 import { setState as setToken } from "../store/token";
 import { persistor, store } from "../store/store";
 
-import { useEffect } from "react";
+import CookieConsent, { Cookies } from "react-cookie-consent";
+import { useState, useEffect } from "react";
 import * as jwt from 'jose';
 
 const AppWrapper = ({ Component, pageProps }) => {
+  const [showCookieConsent, setShowCookieConsent] = useState((Cookies.get("CookieConsent") === "true") ? "hidden" : "show");
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <MyApp Component={Component} pageProps={pageProps} />
+        <CookieConsent
+          visible={showCookieConsent}
+          style={{ background: "#772318" }}
+          buttonText="Acepto"
+          buttonStyle={{ backgroundColor: 'white' }}
+          expires={150}
+          hideOnAccept
+          onAccept={() => setShowCookieConsent("hidden")}>
+          Esta web utiliza cookies para mejorar su experiencia de navegación. Consulte los <a href="/about/terms"><b>términos del servicio</b></a> para más información. Si continúa navegando, consideramos que acepta su uso.
+        </CookieConsent>
       </PersistGate>
     </Provider>
   );
@@ -32,21 +44,17 @@ const MyApp = ({ Component, pageProps }) => {
   }, []);
 
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-          <Stack direction="row" maxWidth={"100%"}>
-            { isLogged ? <Menu></Menu> : null }
-            <Box
-              bgcolor={"#F9FAFA"}
-              height={"100vh"}
-              width={"100%"}
-              style={{ maxHeight: "100vh", overflowY: "auto" }}
-            >
-              <Component {...pageProps} />
-            </Box>
-          </Stack>
-      </PersistGate>
-    </Provider>
+    <Stack direction="row" maxWidth={"100%"}>
+      { isLogged ? <Menu></Menu> : null }
+      <Box
+        bgcolor={"#F9FAFA"}
+        height={"100vh"}
+        width={"100%"}
+        style={{ maxHeight: "100vh", overflowY: "auto" }}
+      >
+        <Component {...pageProps} />
+      </Box>
+    </Stack>
   );
 };
 
