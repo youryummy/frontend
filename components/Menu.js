@@ -39,7 +39,7 @@ export default function Menu() {
     {
       icon: <AutoStoriesIcon fontSize="small" sx={{ marginRight: "20px" }} />,
       text: "Recipe books",
-      link: "/recipe-books",
+      link: "/recipebooks",
     },
     {
       icon: <PersonIcon fontSize="small" sx={{ marginRight: "20px" }} />,
