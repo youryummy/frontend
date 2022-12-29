@@ -21,10 +21,7 @@ export async function middleware(req) {
         return NextResponse.next();
     }
 
-    /* Paths that need no authentication */
-    if (pathname === "/about/terms") return NextResponse.next();
-
-    /* Verify token and redirect to login if token not found */
+    /* Verify token */
     if (session) {
         try {
             user = await jwt.jwtVerify(session.value, process.env.JWT_SECRET ?? enc.encode("testsecret"), { issuer: process.env.JWT_ISSUER ?? "youryummy"});
@@ -32,11 +29,19 @@ export async function middleware(req) {
             return redirect(req.nextUrl, "/error");
         }
     } else {
-        return redirect(req.nextUrl, "/login");
+        /* Paths that need no authentication */
+        if (pathname === "/about/terms") return NextResponse.next();
+        if (pathname === "/register") return NextResponse.next();
+        
+        /* Redirect to login when no token found*/
+        else return redirect(req.nextUrl, "/login");
     }
 
     /* Check permissions and redirect to error pages */
     if (user && pathname === "/login") {
+        return redirect(req.nextUrl, "/");
+    }
+    else if (user && pathname === "/register") {
         return redirect(req.nextUrl, "/");
     }
 

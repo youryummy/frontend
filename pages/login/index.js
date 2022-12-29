@@ -20,7 +20,7 @@ export default function Login() {
         <TextField value={username} onChange={(ev) => validateInput(ev.target.value, "username", setUsername, setError)} error={error.username.length > 0 ? true : false} helperText={error.username} className={styles.formInput} size="small" label="Username" variant="outlined" />
         <TextField value={password} onChange={(ev) => validateInput(ev.target.value, "password", setPassword, setError)} error={error.password.length > 0 ? true : false} helperText={error.password} className={styles.formInput} size="small" label="Password" variant="outlined" type={"password"}/>
         <Button onClick={() => login(username, password, setError)} className={styles.loginButton} variant="contained">Sign In</Button>
-        <Button className={styles.signUpButton} variant="contained">Sign Up</Button>
+        <Button onClick={() => window.location.href = "/register"} className={styles.signUpButton} variant="contained">Sign Up</Button>
       </Paper>
     </div>
   );
