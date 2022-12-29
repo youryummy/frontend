@@ -29,7 +29,7 @@ export default function Menu() {
     {
       icon: <HomeIcon fontSize="small" sx={{ marginRight: "20px" }} />,
       text: "Recipes",
-      link: "/",
+      link: "/recipes",
     },
     {
       icon: <CalendarMonthIcon fontSize="small" sx={{ marginRight: "20px" }} />,
