@@ -5,9 +5,11 @@ import Logo from "../../public/logo.png";
 import { setField, validateField, register } from "./api";
 import { TextField, Button, IconButton } from "@mui/material";
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Login() {
+  const router = useRouter();
   const [data, setData] = useState({username: "", password: "", fullName: "", avatar: null, email: "", birthDate: "", cellPhone: ""});
   const [error, setError] = useState({username: "", password: "", fullName: "", email: "", birthDate: "", cellPhone: ""});
 
@@ -44,7 +46,7 @@ export default function Login() {
 
         { /* Back and save buttons*/ }
         <div style={{display: "flex", flexDirection: "row", gap: "20px", width: "100%"}}>
-          <Button onClick={() => window.location.href = "/login"} className={styles.backButton} variant="contained">Back</Button>
+          <Button onClick={() => router.push("/login")} className={styles.backButton} variant="contained">Back</Button>
           <Button onClick={() => register(data, setError)} className={styles.saveButton} variant="contained">Save</Button>
         </div>
       </Paper>
