@@ -3,11 +3,13 @@ import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { tokenExchange, syncWithCalendar, loginWithGoogle } from "./api";
-import {events} from "./utils/events";
+import { tokenExchange, syncWithCalendar, loginWithGoogle, getEvents } from "./api";
 import CachedIcon from "@mui/icons-material/Cached";
 import GoogleIcon from "@mui/icons-material/Google";
 import Tooltip from "@mui/material/Tooltip";
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -20,19 +22,27 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function Planner() {
   const [groupedEvents, setGroupedEvents] = useState({});
   const [isLogged, setIsLogged] = useState(false);
+  const [syncMessage, setSyncMessage] = useState();
 
   useEffect(() => {
-    //TODO events should be fetched from the backend and have to contain the events from today and if the user is logged in
-    setIsLogged(events["isLogged"]);
-    const groupedEventsByDay = events["events"].reduce((acc, event) => {
-      const date = new Date(event.timestamp * 1000).toDateString();
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(event);
-      return acc;
-    }, {});
-    setGroupedEvents(groupedEventsByDay);
+    getEvents().then((res) => {
+      setIsLogged(res.data["isLogged"]);
+      const groupedEventsByDay = res.data["events"].reduce((acc, event) => {
+        const date = new Date(event.timestamp * 1000).toDateString();
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(event);
+        return acc;
+      }, {});
+      const groupedEventsByDayInverted = {};
+      Object.keys(groupedEventsByDay)
+        .reverse()
+        .forEach((key) => {
+          groupedEventsByDayInverted[key] = groupedEventsByDay[key];
+        });
+      setGroupedEvents(groupedEventsByDayInverted);
+    });
   }, []);
 
   useEffect(() => {
@@ -59,12 +69,17 @@ export default function Planner() {
     window.location.href = url;
   };
 
-  const syncEvent = async () => {
+  const syncEvent = async (event) => {
+    console.log(event);
     const response = await syncWithCalendar(
-      "228ca39118e14db3906b72e8dc0ec11c",
-      "1633043200",
+      event.id,
+      event.timestamp,
       true
     );
+    setSyncMessage(<Alert onClose={() => { setSyncMessage() }} style={{ position: 'absolute', bottom: '0', left: '0', width: '100%', backgroundColor: "#772318", color: "white" }} icon={response.status === 200 ? <CheckIcon style={{ color: "white" }} /> : <PriorityHighIcon style={{ color: "white" }} />}>
+      {response.status === 200 ? "Event synced with Google Calendar" : "Error syncing event with Google Calendar"}
+    </Alert>
+    )
   };
 
   return (
@@ -115,13 +130,13 @@ export default function Planner() {
                       justifyContent: "flex-end",
                     }}
                   >
-                    {isLogged ? (
+                    {isLogged && !event.synced ? (
                       <Tooltip
                         title="Syncronize this event with Google Calendar"
                         arrow
                         placement="top"
                       >
-                        <Button onClick={syncEvent} style={{ color: "#772318" }}>
+                        <Button onClick={() => syncEvent(event)} style={{ color: "#772318" }}>
                           Sync
                           <CachedIcon />
                         </Button>
@@ -140,6 +155,7 @@ export default function Planner() {
           </Grid>
         </Grid>
       ))}
+      {syncMessage}
     </>
   );
 }

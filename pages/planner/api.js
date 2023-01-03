@@ -1,22 +1,22 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost/api/v1/";
+const backendUrl = "http://localhost:8080/api/v1/";
 // const backendUrl = "youryummy-gateway-youryummy-maribelrb22.cloud.okteto.net/api/v1/");
 
 async function apiGet(endpoint) {
-  return await axios.get(`${backendUrl}${endpoint}`);
+    return await axios.get(`${backendUrl}${endpoint}`, {withCredentials: true});
 }
 
 async function apiPut(endpoint, body) {
-  return await axios.put(`${backendUrl}${endpoint}`, body);
+  return await axios.put(`${backendUrl}${endpoint}`, body, {withCredentials: true});
 }
 
 async function apiPost(endpoint, body) {
-  return await axios.post(`${backendUrl}${endpoint}`, body);
+  return await axios.post(`${backendUrl}${endpoint}`, body, {withCredentials: true});
 }
 
 async function apiDelete(endpoint) {
-  return await axios.delete(`${backendUrl}${endpoint}`);
+  return await axios.delete(`${backendUrl}${endpoint}`, {withCredentials: true});
 }
 
 export async function tokenExchange(code) {
@@ -53,4 +53,11 @@ export async function loginWithGoogle(refreshToken) {
     refreshToken: refreshToken,
   };
   return await apiPost(endpoint, body);
+}
+
+export async function getEvents() {
+  const endpoint = "events";
+  let response = await apiGet(endpoint);
+  console.log(response);
+  return response;
 }
