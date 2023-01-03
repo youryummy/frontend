@@ -43,8 +43,8 @@ export default function Profile() {
               <Typography sx={{textDecoration: "underline", color: "gray"}} variant='h6'>@{data.username}</Typography>
               </span>
               <Typography className={styles.userInfo}>Email: <i>{data.email}</i></Typography>
-              {data.cellPhone ? <Typography className={styles.userInfo}>Phone: <i>{data.cellPhone}</i></Typography> : null }
-              {data.cellPhone ? <Typography className={styles.userInfo}>Birth Date: <i>{data.birthDate}</i></Typography> : null }
+              {data.cellPhone && username === tokenUsername ? <Typography className={styles.userInfo}>Phone: <i>{data.cellPhone}</i></Typography> : null }
+              {data.birthDate  && username === tokenUsername? <Typography className={styles.userInfo}>Birth Date: <i>{data.birthDate}</i></Typography> : null }
               <span style={{display: "flex", flexDirection: "column", gap: "10px"}}>
                 <Button className={styles.userRole} variant="outlined" size="medium" disabled>{data.role}</Button>
                 {data.role === "user" && username === tokenUsername ? <Link href={"#"} sx={{textDecoration: "underline"}}>Want More? Go Premium!</Link> : null}
