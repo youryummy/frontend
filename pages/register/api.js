@@ -3,7 +3,7 @@ import { login } from "../login/api.js";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
 
-export const setField = (setData, data, field) => {
+const setField = (setData, data, field) => {
     setData((prev) => ({...prev, [field]: data && field === "avatar" ? {url: URL.createObjectURL(data), file: data} : data}));
 }
 

@@ -2,9 +2,9 @@ import Image from "next/image";
 import styles from "./Register.module.css";
 import Paper from "@mui/material/Paper";
 import Logo from "../../public/logo.png";
-import { setField, validateField, register } from "./api";
+import { validateField, register } from "./api";
 import { TextField, Button, IconButton } from "@mui/material";
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import UploadImage from "../../components/UploadImage.js";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -23,11 +23,8 @@ export default function Login() {
         </div>
 
         { /* Avatar, username and password*/ }
-        <div style={{display: "flex", flexDirection: "row", gap: "20px", width: "100%"}}>
-          <IconButton className={styles.uploadImage} sx={{backgroundImage: data.avatar ? `url(${data.avatar.url})` : null}} component="label">
-            <input onChange={ (ev) => setField(setData, ev.target.files?.[0], "avatar")} hidden accept="image/*" type="file" />
-            {data.avatar ? null : <PhotoCamera/>}
-          </IconButton>
+        <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "20px", width: "100%"}}>
+          <UploadImage data={data} setData={setData} d={100}/>
           <div style={{display: "flex", flexDirection: "column", gap: "20px", width: "100%"}}>
             <TextField value={data.username} onChange={(ev) => validateField(setData, setError, ev.target.value, "username")} error={error.username.length > 0 ? true : false} helperText={error.username} className={styles.formInput} required size="small" label="Username" variant="outlined" />
             <TextField value={data.password} onChange={(ev) => validateField(setData, setError, ev.target.value, "password")} error={error.password.length > 0 ? true : false} helperText={error.password} className={styles.formInput} required size="small" label="Password" variant="outlined" type={"password"}/>
