@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { useSelector } from "react-redux";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import HomeIcon from "@mui/icons-material/Home";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -14,6 +15,7 @@ import Link from "next/Link";
 import { useRouter } from "next/router";
 
 export default function Menu() {
+  const token = useSelector((state) => state.token);
   const router = useRouter();
   const theme = useTheme();
   const mdMatches = useMediaQuery(theme.breakpoints.up("md"));
@@ -30,21 +32,25 @@ export default function Menu() {
       icon: <HomeIcon fontSize="small" sx={{ marginRight: "20px" }} />,
       text: "Recipes",
       link: "/recipes",
+      href: "/recipes",
     },
     {
       icon: <CalendarMonthIcon fontSize="small" sx={{ marginRight: "20px" }} />,
       text: "Planner",
       link: "/planner",
+      href: "/planner",
     },
     {
       icon: <AutoStoriesIcon fontSize="small" sx={{ marginRight: "20px" }} />,
       text: "Recipe books",
       link: "/recipebooks",
+      href: "/recipebooks",
     },
     {
       icon: <PersonIcon fontSize="small" sx={{ marginRight: "20px" }} />,
       text: "Profile",
-      link: "/profile",
+      link: "/profile/[username]",
+      href: `/profile/${token?.username}`,
     },
   ];
 
@@ -82,7 +88,7 @@ export default function Menu() {
             }}
           >
             {buttons.map((button) => (
-              <Link href={button.link} key={button.text}>
+              <Link href={button.href} key={button.text}>
                 <Button
                   key={button.text}
                   variant={"text"}
@@ -147,7 +153,7 @@ export default function Menu() {
             onClose={handleClose}
           >
             {buttons.map((button) => (
-              <Link href={button.link} key={button.text}>
+              <Link href={button.href} key={button.text}>
                 <MenuItem
                   key={button.text}
                   onClick={handleClose}

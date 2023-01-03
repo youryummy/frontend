@@ -1,0 +1,124 @@
+.profileComponent {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.infoWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar {
+    height: 300px!important;
+    width: 300px!important;
+    font-size: 5rem!important;
+}
+
+.userInfo {
+    font-size: 1.2rem!important;
+    font-weight: 550!important;
+}
+
+.userRole {
+    border-color: #772318!important;
+    color: #772318!important;
+}
+
+.notFoundError {
+    height: 50px!important;
+    width: 50px!important;
+    margin: 10px;
+    color: grey;
+}
+
+.formInput {
+    width: 100%;
+}
+
+.basicInfoForm {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    width: 100%;
+}
+
+.saveButton {
+    color: white!important;
+    background-color: #772318!important;
+}
+
+@media only screen and (max-width: 600px) { /* < 600 px */
+    .card {
+        width: 100%;
+        height: 100%;
+        padding: 0px 60px;
+        border-radius: 0!important;
+        box-shadow: none!important;
+    }
+
+    .infoWrapper {
+        gap: 30px;
+        flex-direction: column;
+    }
+
+    .basicInfoForm {
+        flex-direction: column;
+    }
+}
+
+@media only screen and (min-width: 600px) { /* >= 600 px */
+    .card {
+        width: 100%;
+        height: 100%;
+        padding: 0px 120px;
+        border-radius: 0!important;
+        box-shadow: none!important;
+    }
+
+    .infoWrapper {
+        gap: 30px;
+        flex-direction: column;
+    }
+
+    .basicInfoForm {
+        flex-direction: column;
+    }
+}
+
+@media only screen and (min-width: 768px) { /* >= 768 px */
+    .profileComponent {
+        padding: 20px 30px;
+    }
+    
+    .card {
+        width: 100%;
+        height: auto;
+        border-radius: 20px!important;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25)!important;
+        padding: 80px 200px;
+    }
+
+    .infoWrapper {
+        gap: 60px;
+        flex-direction: row;
+    }
+
+    .basicInfoForm {
+        flex-direction: row;
+    }
+}
