@@ -47,6 +47,7 @@ export default function Planner() {
   const [recipeDate, setRecipeDate] = useState("");
   const [recipeHour, setRecipeHour] = useState("");
   const [selectedIdEvent, setSelectedIdEvent] = useState("");
+  const [error, setError] = useState({ date: "" });
 
   useEffect(() => {
     getCurrentEvents();
@@ -105,10 +106,16 @@ export default function Planner() {
       timestamp += 20 * 60 * 60;
     }
 
-    editEvent(selectedIdEvent, timestamp, false).then((response) => {
-      showOperationStatus(response.status);
-      getCurrentEvents();
-    });
+    editEvent(selectedIdEvent, timestamp, false)
+      .then((response) => {
+        showOperationStatus(response.status);
+        getCurrentEvents();
+      })
+      .catch((error) => {
+        if (error.response.status === 400) {
+          setError({ date: "Invalid date" });
+        }
+      });
 
     setModalEditEvent(false);
     setRecipeDate("");
@@ -171,6 +178,31 @@ export default function Planner() {
         children={children}
       />
     );
+  };
+
+  const validateField = (setError, data, field) => {
+    let today = new Date().toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    if (data < today) {
+      setError((prev) => ({
+        ...prev,
+        [field]: "Date must be greater than today",
+      }));
+    } else if (isNaN(new Date(data).getTime())) {
+      setError((prev) => ({
+        ...prev,
+        [field]: "Invalid date format",
+      }));
+    } else {
+      setError((prev) => ({
+        ...prev,
+        [field]: "",
+      }));
+    }
+    setRecipeDate(data);
   };
 
   return (
@@ -273,7 +305,11 @@ export default function Planner() {
                   InputLabelProps={{ shrink: true }}
                   className={styles.input}
                   value={recipeDate}
-                  onChange={(e) => setRecipeDate(e.target.value)}
+                  onChange={(e) =>
+                    validateField(setError, e.target.value, "date")
+                  }
+                  error={error.date.length > 0 ? true : false}
+                  helperText={error.date}
                 />
                 <p>What time?</p>
                 <FormControl fullWidth>
@@ -294,6 +330,7 @@ export default function Planner() {
             </div>
             <Button
               className={styles.confirmButton}
+              disabled={error.date.length > 0 ? true : false}
               onClick={() => editCurrentEvent()}
             >
               <EditIcon className={styles.buttonIcon} />
