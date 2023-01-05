@@ -2,6 +2,8 @@ import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setState as isGoogleLogin } from "../../store/googleLogin";
 import Button from "@mui/material/Button";
 import {
   tokenExchange,
@@ -10,17 +12,8 @@ import {
   getEvents,
   deleteEvent,
 } from "./api";
-import CachedIcon from "@mui/icons-material/Cached";
-import GoogleIcon from "@mui/icons-material/Google";
-import Tooltip from "@mui/material/Tooltip";
-import Alert from "@mui/material/Alert";
-import CheckIcon from "@mui/icons-material/Check";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import CancelIcon from "@mui/icons-material/Cancel";
 import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -29,6 +22,15 @@ import FormControl from "@mui/material/FormControl";
 import styles from "./Planner.module.css";
 import { useMemo } from "react";
 import _ from "lodash";
+import CachedIcon from "@mui/icons-material/Cached";
+import GoogleIcon from "@mui/icons-material/Google";
+import CheckIcon from "@mui/icons-material/Check";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CancelIcon from "@mui/icons-material/Cancel";
+import Tooltip from "@mui/material/Tooltip";
+import Alert from "@mui/material/Alert";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -48,6 +50,7 @@ export default function Planner() {
   const [recipeHour, setRecipeHour] = useState("");
   const [selectedIdEvent, setSelectedIdEvent] = useState("");
   const [error, setError] = useState({ date: "" });
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getCurrentEvents();
@@ -81,8 +84,11 @@ export default function Planner() {
     const response = await tokenExchange(code);
     let refreshToken = response.data.refresh_token;
     window.history.replaceState({}, document.title, "/planner");
-    await loginWithGoogle(refreshToken);
-    getCurrentEvents();
+    let res = await loginWithGoogle(refreshToken);
+    if (res.status === 200) {
+      dispatch(isGoogleLogin(true));
+      getCurrentEvents();
+    }
   };
 
   const getOauth2Code = () => {
