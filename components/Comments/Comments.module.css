@@ -1,0 +1,15 @@
+.commentName{
+    font-weight: bold;
+}
+
+.nameLine {
+    display: "flex";
+    justify-content: "flex-start";
+}
+
+.commentPfp {
+    display: block;
+    object-fit: fill;
+    width: 100px; 
+    height: 100px; 
+}
