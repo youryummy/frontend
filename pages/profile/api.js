@@ -78,3 +78,16 @@ export const modify = (username, data, setError, setEdit) => {
         else alert(err.response?.data.message ?? err.response?.data.error ?? "Could not connect to server, please try again later");
     });
 }
+
+export const upgradePlan = (username, plan, data) => {
+    data.plan = plan;
+
+    const formData = new FormData();
+    formData.append("Avatar", "");
+    formData.append("AccountInfo", JSON.stringify(data));
+
+    return axios.put(`${backendUrl}/api/v1/accounts/${username}`, formData, 
+    {   withCredentials: true,
+        headers: { "content-type": "multipart/form-data"}
+    });
+}

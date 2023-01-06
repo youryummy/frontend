@@ -1,4 +1,9 @@
-import { Typography, TextField, Button, IconButton } from "@mui/material";
+import { 
+  Typography,
+  TextField,
+  Button, 
+  IconButton, 
+} from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import styles from "./Profile.module.css";
 import Paper from "@mui/material/Paper";
@@ -6,14 +11,15 @@ import { fetchData } from "./api";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import Link from "next/Link";
 import EditIcon from '@mui/icons-material/Edit';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import CircularProgress from '@mui/material/CircularProgress';
 import SadFace from '@mui/icons-material/SentimentVeryDissatisfied';
-import { validateField, modify } from "./api";
+import { validateField, modify, upgradePlan } from "./api";
 
 import UploadImage from "../../components/UploadImage.js";
+import Plans from "../../components/Plans.js";
+
 
 export default function Profile() {
     const router = useRouter();
@@ -46,8 +52,18 @@ export default function Profile() {
               {data.cellPhone && username === tokenUsername ? <Typography className={styles.userInfo}>Phone: <i>{data.cellPhone}</i></Typography> : null }
               {data.birthDate  && username === tokenUsername? <Typography className={styles.userInfo}>Birth Date: <i>{data.birthDate}</i></Typography> : null }
               <span style={{display: "flex", flexDirection: "column", gap: "10px"}}>
-                <Button className={styles.userRole} variant="outlined" size="medium" disabled>{data.role}</Button>
-                {data.role === "user" && username === tokenUsername ? <Link href={"#"} sx={{textDecoration: "underline"}}>Want More? Go Premium!</Link> : null}
+                <Button className={styles.userPlan} variant="outlined" size="medium" disabled>{data.plan} Plan</Button>
+                {data.plan !== "premium" && username === tokenUsername ? 
+                  <Plans 
+                    popover
+                    payment 
+                    paymentProps={{
+                      currentPlan: data.plan,
+                      onSuccess: (newPlan) => upgradePlan(username, newPlan, data).then(() => fetchData(`/api/v1/accounts/${username}`, setData, setLoading)),
+                      onError: (err) => {alert("Error in the transaction."); console.log(err)}
+                    }}
+                    popoverProps={{buttonText: "Want more? Go premium!"}}/>
+                  : null}
               </span>
             </div>
           </div>
@@ -96,4 +112,3 @@ export default function Profile() {
       </div>
     );
   }
-  
