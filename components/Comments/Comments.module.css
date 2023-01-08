@@ -30,6 +30,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    margin-bottom: 15px;
 }
 
 .commentText {
@@ -40,4 +41,27 @@
 .pfpContainer {
     display: flex;
     align-items: center;
+}
+
+.formInput {
+    width: 100%;
+}
+
+.postButton {
+    color: white!important;
+    background-color: #772318!important;
+}
+
+.postButtonContainer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.item{
+    border-radius: 50px;
+    height: auto;
+    margin: 30px;
 }

@@ -1,9 +1,9 @@
-import Comments from "../../components/Comments/Comments";
+import CommentsList from "../../components/Comments/CommentsList";
 
 export default function Home(Component, props) {
   return (
     <>
-      <Comments> </Comments>
+      <CommentsList> </CommentsList>
     </>
   )
 }
