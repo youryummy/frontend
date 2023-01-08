@@ -2,14 +2,42 @@
     font-weight: bold;
 }
 
-.nameLine {
-    display: "flex";
-    justify-content: "flex-start";
+.commentLine {
+    display: flex;
+    justify-content: flex-start;
 }
 
 .commentPfp {
-    display: block;
-    object-fit: fill;
-    width: 100px; 
-    height: 100px; 
+ 
+    border-radius: 50%;
+    width: 80px; 
+    height: 80px;
+    object-fit: cover;
+
+    margin-right: 10px;
+}
+
+.commentHeart {
+    width: 15px; 
+    height: 15px; 
+    margin-left: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.comment {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.commentText {
+    text-align: left;
+    margin: 0;
+}
+
+.pfpContainer {
+    display: flex;
+    align-items: center;
 }

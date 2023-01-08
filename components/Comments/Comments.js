@@ -15,50 +15,23 @@ export default function Comments() {
   return (
     <>
       <Item style={{ borderRadius: "20px", height: "350px" }}>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        ></div>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-start",
-          }}
-        >
+        <div className={styles.comment}>
+          <div className={styles.pfpContainer}>
           <img src="/empytPfp.png" className={styles.commentPfp} />
-
-          <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-start",
-            }}
-          >
-            <p className={styles.commentName}>Nombre</p>
-            <img
-              src="/heartIconFill.svg"
-              style={{
-                width: "15px",
-                height: "15px",
-                marginTop: "auto",
-                marginBottom: "auto",
-                marginLeft: "5px",
-              }}
-            />
           </div>
-        
+          <div >
+            <div className={styles.commentLine}>
+              <p className={styles.commentName}>Nombre</p>
+              <img className={styles.commentHeart} src="/heartIconFill.svg" />
+            </div>
 
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          ultrices dapibus purus, vitae hendrerit elit rhoncus non. Etiam
-          maximus purus non diam bibendum, at iaculis est feugiat.
-        </p>
-        <p>test p3</p>
-        </div>
+            <p className={styles.commentText}> 
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum ultrices dapibus purus, vitae hendrerit elit rhoncus
+              non. Etiam maximus purus non diam bibendum, at iaculis est
+              feugiat.
+            </p>
+          </div>
         </div>
       </Item>
     </>
