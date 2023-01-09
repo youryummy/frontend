@@ -1,0 +1,9 @@
+.bookList{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.addIcon{
+    margin-top: 20px;
+}
