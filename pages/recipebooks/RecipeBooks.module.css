@@ -7,3 +7,21 @@
 .addIcon{
     margin-top: 20px;
 }
+
+
+.formInput {
+    width: 100%;
+}
+
+.saveButton {
+    color: white!important;
+    background-color: #772318!important;
+}
+
+.saveButtonContainer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+}

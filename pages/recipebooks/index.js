@@ -1,5 +1,6 @@
 import RecipeBookItem from "../../components/recipebooks/RecipeBookItem";
 import RecipeBookHeader from "../../components/recipebooks/RecipeBookHeader";
+import RecipeBookEdit from "../../components/recipebooks/RecipeBookEdit";
 
 import styles from "./RecipeBooks.module.css";
 import IconButton from "@mui/material/IconButton";
@@ -25,6 +26,7 @@ export default function RecipeBooks() {
     </div>
 
     <RecipeBookHeader name="Book Name" summary="Book description lalaalal"></RecipeBookHeader>
+    <RecipeBookEdit></RecipeBookEdit>
   </div>
   
   
