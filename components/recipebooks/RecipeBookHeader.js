@@ -3,6 +3,7 @@ import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import DeleteRecipeModal from "./DeleteRecipeModal";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -29,9 +30,7 @@ export default function RecipeBookHeader({ name, summary }) {
           <IconButton aria-label="edit" size="small" color="default">
             <EditIcon fontSize="inherit" />
           </IconButton>
-          <IconButton aria-label="delete" size="small" color="default">
-            <DeleteIcon fontSize="inherit" />
-          </IconButton>
+          <DeleteRecipeModal></DeleteRecipeModal>
         </div>
 
         <p>{summary}</p>

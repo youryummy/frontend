@@ -66,3 +66,14 @@
     height: auto;
     margin: 30px;
 }
+
+.cancelButton{
+    color: white!important;
+    background-color: #c5c5c5!important;
+}
+
+.deleteButtons{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
