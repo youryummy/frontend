@@ -1,11 +1,11 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import counter from "./counterSlice";
+import token from "./token";
 import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
 import thunk from "redux-thunk";
 
 const rootReducer = combineReducers({
-  counter,
+  token,
 });
 
 const persistConfig = {
