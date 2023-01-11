@@ -1,7 +1,7 @@
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { TextField, Button } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { validateInput, saveRecipeBook } from "../../pages/recipebooks/api";
 import styles from "../../pages/recipebooks/RecipeBooks.module.css";
 
@@ -13,10 +13,25 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function RecipeBookEdit({ name, summary, setCreate }) {
+export default function RecipeBookEdit({
+  data,
+  username,
+  setCreate,
+  saveFunction,
+}) {
   const [newName, setName] = useState("");
+  const [isNew, setIsNew] = useState(true);
   const [newSummary, setSummary] = useState("");
   const [error, setError] = useState({ newSummary: "", newName: "" });
+
+  useEffect(() => {
+    if (data != null) {
+      setName(data.name);
+      setSummary(data.summary);
+      setIsNew(false);
+    }
+  }, []);
+
   return (
     <>
       <Item
@@ -63,7 +78,12 @@ export default function RecipeBookEdit({ name, summary, setCreate }) {
             </Button>
           </div>
           <Button
-            onClick={() => postComment(newComment)}
+            onClick={() => {
+              isNew
+                ? saveFunction(newName, newSummary, username)
+                : saveFunction(newName, newSummary, data);
+              setCreate(false);
+            }}
             className={styles.saveButton}
             variant="contained"
           >

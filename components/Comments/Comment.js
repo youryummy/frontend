@@ -4,8 +4,9 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import DeleteCommentModal from "./DeleteCommentModal";
+import { putRating } from "./api";
 
-export default function Comment({ name, like, text, img, byUser }) {
+export default function Comment({ data, name, img, idUser}) {
   return (
     <>
       <div className={styles.comment}>
@@ -16,10 +17,10 @@ export default function Comment({ name, like, text, img, byUser }) {
           <div className={styles.commentLine}>
             <p className={styles.commentName}>{name}</p>
 
-            {byUser ? (
+            {idUser === data.idUser ? (
               <div className={styles.commentLine}>
-                {like ? (
-                  <IconButton aria-label="like" size="small" color="default">
+                {data.like ? (
+                  <IconButton  aria-label="like" size="small" color="default">
                     <FavoriteIcon fontSize="inherit"/>
                   </IconButton>
                 ) : (
@@ -30,17 +31,17 @@ export default function Comment({ name, like, text, img, byUser }) {
                  <IconButton aria-label="edit"  size="small" color="default">
                   <EditIcon fontSize="inherit"/>
                 </IconButton>
-                <DeleteCommentModal></DeleteCommentModal>
+                <DeleteCommentModal idRating={data._id}></DeleteCommentModal>
 
               </div>
             ) : (
               <div className={styles.commentLine}>
-                {like ? (
-                  <IconButton aria-label="like" disabled  size="small"  color="default">
+                {data.like ? (
+                  <IconButton  onClick={() => putRating(false, data.comment, data) } aria-label="like" disabled  size="small"  color="default">
                     <FavoriteIcon fontSize="inherit" />
                   </IconButton>
                 ) : (
-                  <IconButton aria-label="like" disabled  size="small" color="default">
+                  <IconButton  onClick={() => putRating(true, data.comment, data) } aria-label="like" disabled  size="small" color="default">
                     <FavoriteBorderIcon fontSize="inherit" />
                   </IconButton>
                 )}
@@ -48,7 +49,7 @@ export default function Comment({ name, like, text, img, byUser }) {
             )}
           </div>
 
-          <p className={styles.commentText}>{text}</p>
+          <p className={styles.commentText}>{data.comment}</p>
         </div>
       </div>
     </>

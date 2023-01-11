@@ -10,3 +10,65 @@ export const validateInput = (input, type, setState, setError) => {
 export const postComment = (text) => {
     
 }
+
+
+export function fetchData(idRecipe, setData) {
+    
+    axios.get(`${backendUrl}/api/v1/ratings/findByRecipeId/${idRecipe}`).then((res) => {
+        setData(res.data);
+        setLoading(false);
+    }).catch((err) => {
+        if (err.response?.status === 404) {
+            setData(null);
+            setLoading(false);
+        } else {
+            console.log(err);
+            alert("Something went wrong, please try again later.");
+        }
+    });
+}
+
+export const postRating = (like, comment, username, idRecipe) => {
+
+    return axios.post(`${backendUrl}/api/v1/ratings`, {
+        idUser: username,
+        idRecipe: idRecipe,
+        like: like,
+        comment: comment
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+}
+
+export const putRating = (like, comment, data) => {
+
+    console.log("HACIENDO EL PPUUUUUUT");
+    return axios.put(`${backendUrl}/api/v1/ratings/${data._id}`, {
+        like: like,
+        comment: comment,
+        idUser: data.idUser,
+        idRecipe: data.idRecipe
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+}
+
+export const deleteRating = (idRating) => {
+
+
+    return axios.delete(`${backendUrl}/api/v1/ratings/${idRating}`)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+}

@@ -24,7 +24,7 @@ export async function middleware(req) {
     /* Verify token */
     if (session) {
         try {
-            user = (await jwt.jwtVerify(session.value, enc.encode(process.env.JWT_SECRET ?? "testsecret"), { issuer: process.env.JWT_ISSUER ?? "youryummy"}))?.payload;
+            user = (await jwt.jwtVerify(session.value, enc.encode(process.env.JWT_SECRET ?? "youryummysecret"), { issuer: process.env.JWT_ISSUER ?? "youryummy"}))?.payload;
         } catch(e) {
             return redirect(req.nextUrl, "/error");
         }

@@ -13,7 +13,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function RecipeBookHeader({ name, summary }) {
+export default function RecipeBookHeader({ name, summary, setEdit }) {
   return (
     <>
       <Item
@@ -27,7 +27,7 @@ export default function RecipeBookHeader({ name, summary }) {
       >
         <div style={{display: "flex", justifyContent: "center"}}>
           <h1 style={{marginRight: "5px"}}>{name}</h1>
-          <IconButton aria-label="edit" size="small" color="default">
+          <IconButton onClick={() => setEdit(true) } aria-label="edit" size="small" color="default">
             <EditIcon fontSize="inherit" />
           </IconButton>
           <DeleteRecipeModal></DeleteRecipeModal>

@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import styles from "./Comments.module.css";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
+import { deleteRating } from "./api";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -22,7 +23,9 @@ const Item = styled(Paper)(({ theme }) => ({
   width: 400,
 }));
 
-export default function DeleteCommentModal() {
+
+
+export default function DeleteCommentModal(idRating) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -45,9 +48,9 @@ export default function DeleteCommentModal() {
           </Typography>
           <div className={styles.deleteButtons}>
           <div style={{marginRight: "10px"}}>
-          <Button onClick={() => ""} className={styles.cancelButton} variant="contained">Cancel</Button>
+          <Button onClick={() => setOpen(false)} className={styles.cancelButton} variant="contained">Cancel</Button>
           </div>
-          <Button onClick={() => ""} className={styles.postButton} variant="contained">Delete</Button>
+          <Button onClick={() => {deleteRating(idRating); setOpen(false);}} className={styles.postButton} variant="contained">Delete</Button>
           </div>
           
         </Item>
