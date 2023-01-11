@@ -263,33 +263,34 @@ export default function EnhancedTable() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0;
 
   return (
-    // <Box sx={{ width: '100%' }}>
     <Item style={{ borderRadius: "20px", height: "auto", padding: "20px", margin: "20px" }}>
-      {/* <Paper sx={{ width: '100%', marginBottom: 2 }}> */}
         <TableContainer>
-          <Box style={{display: "flex", alignItems: "flex-end", margin: "0px 50px 0px 20px"}}>
+          <Box style={{display: "flex", alignItems: "flex-end", margin: "0px 50px 0px 0px"}}>
             <Typography
               sx={{ flex: '1 1 100%' }}
               variant="h5"
               id="tableTitle"
               component="div"
+              style={{textAlign: "left"}}
             >
               Ingredients list
             </Typography>
-            <IconButton onClick={handleAddClick.bind(null)} style={{borderRadius: "15px", backgroundColor: "rgba(0, 0, 0, 0.05)", marginRight: "15px", fontSize: "16px", padding: "4px 8px 4px 2px"}}>
-              <AddIcon/> Add ingredient
-            </IconButton>
-            <TextField
-              style={{ width: "300px" }}
-              label="Filter ingredients"
-              value={filterValue}
-              onChange={event => setFilterValue(event.target.value)}
-              onKeyUp={event => {
-                if (event.key === "Enter") {
-                  fetchData(filterValue === "" ? 100 : ingredients.length, filterValue);
-                }
-              }}
-            />
+            <div style={{display: "flex", alignItems: "flex-end"}}>
+              <IconButton onClick={handleAddClick.bind(null)} style={{borderRadius: "15px", backgroundColor: "rgba(0, 0, 0, 0.05)", marginRight: "15px", fontSize: "16px", padding: "4px 8px 4px 2px"}}>
+                <AddIcon/> Add ingredient
+              </IconButton>
+              <TextField
+                style={{ width: "300px" }}
+                label="Filter ingredients"
+                value={filterValue}
+                onChange={event => setFilterValue(event.target.value)}
+                onKeyUp={event => {
+                  if (event.key === "Enter") {
+                    fetchData(filterValue === "" ? 100 : ingredients.length, filterValue);
+                  }
+                }}
+              />
+            </div>
           </Box>
           <Table
             sx={{ minWidth: 750 }}
@@ -360,8 +361,6 @@ export default function EnhancedTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      {/* </Paper> */}
-    {/* </Box> */}
     </Item>
   );
 }
