@@ -13,7 +13,6 @@ import { persistor, store } from "../store/store";
 import CookieConsent, { Cookies } from "react-cookie-consent";
 import { useState, useEffect } from "react";
 import * as jwt from 'jose';
-import IngredientsList from "../components/IngredientsList";
 
 const AppWrapper = ({ Component, pageProps }) => {
   const [showCookieConsent, setShowCookieConsent] = useState((Cookies.get("CookieConsent") === "true") ? "hidden" : "show");
@@ -54,7 +53,6 @@ const MyApp = ({ Component, pageProps }) => {
         style={{ maxHeight: "100vh", overflowY: "auto" }}
       >
         <Component {...pageProps} />
-        <IngredientsList></IngredientsList>
       </Box>
     </Stack>
   );
