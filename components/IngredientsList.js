@@ -18,8 +18,17 @@ import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import { Button, Dialog, DialogContent, DialogTitle, TextField } from '@material-ui/core';
 import axios from 'axios';
+import { experimentalStyled as styled } from "@mui/material/styles";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -254,8 +263,9 @@ export default function EnhancedTable() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0;
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', marginBottom: 2 }}>
+    // <Box sx={{ width: '100%' }}>
+    <Item style={{ borderRadius: "20px", height: "auto", padding: "20px", margin: "20px" }}>
+      {/* <Paper sx={{ width: '100%', marginBottom: 2 }}> */}
         <TableContainer>
           <Box style={{display: "flex", alignItems: "flex-end", margin: "0px 50px 0px 20px"}}>
             <Typography
@@ -350,7 +360,8 @@ export default function EnhancedTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </Paper>
-    </Box>
+      {/* </Paper> */}
+    {/* </Box> */}
+    </Item>
   );
 }
