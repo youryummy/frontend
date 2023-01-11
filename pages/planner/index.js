@@ -116,17 +116,18 @@ export default function Planner() {
       .then((response) => {
         showOperationStatus(response.status);
         getCurrentEvents();
+        setModalEditEvent(false);
+        setRecipeDate("");
+        setRecipeHour("");
+        setSelectedIdEvent("");
+        setError({ date: "" });
       })
       .catch((error) => {
         if (error.response.status === 400) {
-          setError({ date: "Invalid date" });
+          setError({ date: error.response.data["message"] });
+          return;
         }
       });
-
-    setModalEditEvent(false);
-    setRecipeDate("");
-    setRecipeHour("");
-    setSelectedIdEvent("");
   };
 
   const openEditModal = (event) => {
@@ -211,6 +212,11 @@ export default function Planner() {
     setRecipeDate(data);
   };
 
+  const cancelActionButton = () => {
+    setModalEditEvent(false)
+    setError({ date: "" });
+  }
+
   return (
     <>
       {!isLogged ? (
@@ -236,7 +242,7 @@ export default function Planner() {
       )}
       {Object.keys(groupedEvents).map((date, id) => (
         <Grid item xs={12} padding={"20px"} key={id}>
-          <h1>
+          <h1 style={{ color: "black" }}>
             {new Date(groupedEvents[date][0].timestamp * 1000).toDateString()}
           </h1>
           <Grid
@@ -344,7 +350,7 @@ export default function Planner() {
             </Button>
             <Button
               className={styles.cancelButton}
-              onClick={() => setModalEditEvent(false)}
+              onClick={() => cancelActionButton()}
             >
               <CancelIcon className={styles.buttonIcon} /> Cancel
             </Button>
