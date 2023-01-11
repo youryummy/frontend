@@ -1,22 +1,28 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost/api/v1/";
+const backendUrl = "http://localhost:8080/api/v1/";
 // const backendUrl = "youryummy-gateway-youryummy-maribelrb22.cloud.okteto.net/api/v1/");
 
 async function apiGet(endpoint) {
-  return await axios.get(`${backendUrl}${endpoint}`);
+  return await axios.get(`${backendUrl}${endpoint}`, { withCredentials: true });
 }
 
 async function apiPut(endpoint, body) {
-  return await axios.put(`${backendUrl}${endpoint}`, body);
+  return await axios.put(`${backendUrl}${endpoint}`, body, {
+    withCredentials: true,
+  });
 }
 
 async function apiPost(endpoint, body) {
-  return await axios.post(`${backendUrl}${endpoint}`, body);
+  return await axios.post(`${backendUrl}${endpoint}`, body, {
+    withCredentials: true,
+  });
 }
 
 async function apiDelete(endpoint) {
-  return await axios.delete(`${backendUrl}${endpoint}`);
+  return await axios.delete(`${backendUrl}${endpoint}`, {
+    withCredentials: true,
+  });
 }
 
 export async function tokenExchange(code) {
@@ -29,20 +35,12 @@ export async function tokenExchange(code) {
   return access_token;
 }
 
-export async function syncWithCalendar(
-  eventId,
-  timestamp,
-  synced,
-  accessToken,
-  refreshToken
-) {
+export async function editEvent(eventId, timestamp, synced) {
   const endpoint = "events";
   const body = {
     id: eventId,
     timestamp: timestamp,
     synced: synced,
-    accessToken: accessToken,
-    refreshToken: refreshToken,
   };
   return await apiPut(endpoint, body);
 }
@@ -53,4 +51,15 @@ export async function loginWithGoogle(refreshToken) {
     refreshToken: refreshToken,
   };
   return await apiPost(endpoint, body);
+}
+
+export async function getEvents() {
+  const endpoint = "events";
+  let response = await apiGet(endpoint);
+  return response;
+}
+
+export async function deleteEvent(eventId) {
+  const endpoint = `events/${eventId}`;
+  return await apiDelete(endpoint);
 }
