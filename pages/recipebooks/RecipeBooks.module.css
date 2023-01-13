@@ -1,0 +1,38 @@
+.bookList{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.addIcon{
+    margin-top: 20px;
+}
+
+
+.formInput {
+    width: 100%;
+}
+
+.saveButton {
+    color: white!important;
+    background-color: #772318!important;
+}
+
+.saveButtonContainer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.cancelButton{
+    color: white!important;
+    background-color: #c5c5c5!important;
+}
+
+.deleteButtons{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
