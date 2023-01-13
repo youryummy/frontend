@@ -3,44 +3,18 @@ import axios from "axios";
 const backendUrl =
   process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
 
-export function fetchData(username, setData, setLoading) {
-  axios
+export function fetchData(username) {
+  return axios
     .get(`${backendUrl}/api/v1/recipesBooks/findByUserId/${username}`)
-    .then((res) => {
-      setData(res.data);
-      setLoading(false);
-    })
-    .catch((err) => {
-      if (err.response?.status === 404) {
-        setData(null);
-        setLoading(false);
-      } else {
-        console.log(err);
-        alert("Something went wrong, please try again later.");
-      }
-    });
+    
 }
 
-export function fetchRecipeBook(recipeBookId, setData, setLoading) {
-  console.log("fetch aqui "+`${backendUrl}/api/v1/recipesBooks/`+recipeBookId)
+export function fetchRecipeBook(recipeBookId) {
 
-  axios.get(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`)
-    .then((res) => {
-      setData(res.data);
-      setLoading(false);
-    })
-    .catch((err) => {
-      if (err.response?.status === 404) {
-        setData(null);
-        setLoading(false);
-      } else {
-        console.log(err);
-        alert("Something went wrong, please try again later.");
-      }
-    });
+  return axios.get(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`);
 }
 
-export const addRecipeBook = (name, summary, username) => {
+export function addRecipeBook(name, summary, username) {
   return axios.post(`${backendUrl}/api/v1/recipesBooks`, {
       name: name,
       summary: summary,
@@ -55,7 +29,7 @@ export const addRecipeBook = (name, summary, username) => {
     });
 };
 
-export const editRecipeBook = (name, summary, data) => {
+export function editRecipeBook(name, summary, data) {
   return axios
     .put(`${backendUrl}/api/v1/recipesBooks/${data._id}`, {
       name: name,
@@ -71,7 +45,7 @@ export const editRecipeBook = (name, summary, data) => {
     });
 };
 
-export const deleteRecipeBook = (recipeBookId) =>{
+export function deleteRecipeBook(recipeBookId){
     console.log("borro aqui "+`${backendUrl}/api/v1/recipesBooks/`+recipeBookId)
     return axios
       .delete(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`)

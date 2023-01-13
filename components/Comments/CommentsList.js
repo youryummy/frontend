@@ -20,7 +20,6 @@ export default function CommentsList() {
   const [ratings, setRatings] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [like, setLike] = useState(false);
-  const [showAddComment, setShowAddComment] = useState(true);
   const [currentUserRating, setCurrentUserRating] = useState({});
   const [showEditComment, setShowEditComment] = useState(false);
   const [error, setError] = useState({ newComment: "" });
@@ -33,6 +32,8 @@ export default function CommentsList() {
 
   const getCurrentRatings = useMemo(() => {
     return () => {
+      setCurrentUserRating({});
+      setCommentText("");
       fetchData(idRecipe)
         .then((res) => {
           res.data.forEach((item) => {
@@ -46,6 +47,7 @@ export default function CommentsList() {
         .catch((err) => {
           if (err.response?.status === 404) {
             setRatings(null);
+            
           } else {
             console.log(err);
             alert("Something went wrong, please try again later.");

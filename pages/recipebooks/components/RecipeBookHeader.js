@@ -11,7 +11,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function RecipeBookHeader({ data, setEdit, idRecipeBook }) {
+export default function RecipeBookHeader({ data, setEdit}) {
   return (
     <>
       <Item

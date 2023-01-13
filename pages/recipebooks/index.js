@@ -1,7 +1,7 @@
 import RecipeBookItem from "./components/RecipeBookItem";
 import RecipeBookHeader from "./components/RecipeBookHeader";
 import RecipeBookEdit from "./components/RecipeBookEdit";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import styles from "./RecipeBooks.module.css";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
@@ -10,19 +10,46 @@ import Link from "next/Link";
 
 export default function RecipeBooks() {
   const [recipebooks, setRecipebooks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [create, setCreate] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
   const username = "Deyan"; //ESTO SE CAMBIA LUEGO
 
   useEffect(() => {
-    fetchData(username, setRecipebooks, setLoading);
+    getCurrentRecipeBooks();
   }, []);
 
-  if (!create)
+  const getCurrentRecipeBooks = useMemo(() => {
+    return () => {
+      fetchData(username)
+        .then((res) => {
+          setRecipebooks(res.data);
+        })
+        .catch((err) => {
+          if (err.response?.status === 404) {
+            setRecipebooks(null);
+          } else {
+            console.log(err);
+            alert("Something went wrong, please try again later.");
+          }
+        });
+    };
+  }, []);
+
+  const checkSaveRecipeBook = async (
+    newName,
+    newSummary,
+    currentRecipeBook
+  ) => {
+    await addRecipeBook(newName, newSummary, username);
+
+    setShowCreate(false);
+    getCurrentRecipeBooks();
+  };
+
+  if (!showCreate)
     return (
       <div>
         <IconButton
-          onClick={() => setCreate(true)}
+          onClick={() => setShowCreate(true)}
           aria-label="delete"
           size="large"
           color="default"
@@ -32,12 +59,12 @@ export default function RecipeBooks() {
         </IconButton>
 
         {recipebooks.length === 0 ? (
-          <div>no hay</div>
+          ""
         ) : (
           <div className={styles.bookList}>
-            {recipebooks.map((item) => (
+            {recipebooks.map((item, index) => (
               <Link
-                key="{item}"
+                key={index}
                 href={{
                   pathname: "/recipebooks/[recipebook]",
                   query: { idRecipeBook: item._id },
@@ -53,7 +80,8 @@ export default function RecipeBooks() {
   else
     return (
       <RecipeBookEdit
-        setCreate={setCreate}
+        checkSaveRecipeBook={checkSaveRecipeBook}
+        setShowCreate={setShowCreate}
         username={username}
       ></RecipeBookEdit>
     );

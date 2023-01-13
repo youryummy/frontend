@@ -3,10 +3,7 @@ import Paper from "@mui/material/Paper";
 import { TextField, Button } from "@mui/material";
 import { useState, useEffect } from "react";
 import {
-  validateInput,
-  addRecipeBook,
-  editRecipeBook,
-  deleteRecipeBook,
+  validateInput, deleteRecipeBook
 } from "../api";
 import styles from "../RecipeBooks.module.css";
 
@@ -18,19 +15,29 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function RecipeBookEdit({ data, username, setCreate }) {
+export default function RecipeBookEdit({
+  currentRecipeBook,
+  setShowCreate,
+  checkSaveRecipeBook
+}) {
   const [newName, setName] = useState("");
   const [isNew, setIsNew] = useState(true);
   const [newSummary, setSummary] = useState("");
   const [error, setError] = useState({ newSummary: "", newName: "" });
 
   useEffect(() => {
-    if (data != null) {
-      setName(data.name);
-      setSummary(data.summary);
+    if (currentRecipeBook != null) {
+      setName(currentRecipeBook.name);
+      setSummary(currentRecipeBook.summary);
       setIsNew(false);
     }
   }, []);
+
+  const checkDeleteRecipeBook = async () => {
+    await deleteRecipeBook(currentRecipeBook._id);
+
+    history.back()
+  };
 
   return (
     <>
@@ -69,21 +76,23 @@ export default function RecipeBookEdit({ data, username, setCreate }) {
         />
         <div className={styles.saveButtonContainer}>
           {!isNew ? (
-          <Button
-            onClick={() => {
-              deleteRecipeBook(data._id);
-              setCreate(false);
-            }}
-            className={styles.deleteButton}
-            variant="contained"
-          >
-            Delete
-          </Button>
-          ) : ""}
-          <div style={{width: "100%"}}></div>
+            <Button
+              onClick={() => {
+                checkDeleteRecipeBook();
+                setShowCreate(false);
+              }}
+              className={styles.deleteButton}
+              variant="contained"
+            >
+              Delete
+            </Button>
+          ) : (
+            ""
+          )}
+          <div style={{ width: "100%" }}></div>
           <div style={{ marginRight: "10px" }}>
             <Button
-              onClick={() => setCreate(false)}
+              onClick={() => setShowCreate(false)}
               className={styles.cancelButton}
               variant="contained"
             >
@@ -92,10 +101,7 @@ export default function RecipeBookEdit({ data, username, setCreate }) {
           </div>
           <Button
             onClick={() => {
-              isNew
-                ? addRecipeBook(newName, newSummary, username)
-                : editRecipeBook(newName, newSummary, data);
-              setCreate(false);
+              checkSaveRecipeBook(newName, newSummary, currentRecipeBook);
             }}
             className={styles.saveButton}
             variant="contained"
