@@ -3,9 +3,8 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
-import { putRating } from "./api";
 
-export default function Comment({ data, name, img, idUser, setShowEditComment}) {
+export default function Comment({ data, name, img, idUser, setShowEditComment, putLike}) {
   return (
     <>
       <div className={styles.comment}>
@@ -19,18 +18,21 @@ export default function Comment({ data, name, img, idUser, setShowEditComment}) 
             {idUser === data.idUser ? (
               <div className={styles.commentLine}>
                 {data.like ? (
-                  <IconButton onClick={() => putRating(false, data.comment, data)}  aria-label="like" size="small" color="default">
+                  <IconButton onClick={() => putLike(false)}  aria-label="like" size="small" color="default">
                     <FavoriteIcon fontSize="inherit"/>
                   </IconButton>
                 ) : (
-                  <IconButton onClick={() => putRating(true, data.comment, data)} aria-label="like" size="small" color="default">
+                  <IconButton onClick={() => putLike(true)} aria-label="like" size="small" color="default">
                     <FavoriteBorderIcon  fontSize="inherit"/>
                   </IconButton>
                 )}
-                 <IconButton  onClick={() => setShowEditComment(true)} aria-label="edit"  size="small" color="default">
+                {data.comment === "" ? (
+                 ""
+                ) : (
+                  <IconButton  onClick={() => setShowEditComment(true)} aria-label="edit"  size="small" color="default">
                   <EditIcon fontSize="inherit"/>
                 </IconButton>
-
+                  )}
               </div>
             ) : (
               <div className={styles.commentLine}>
