@@ -26,6 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Tooltip from "@mui/material/Tooltip";
 import Alert from "@mui/material/Alert";
+import {recipes} from "./utils/recipes";
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -39,6 +40,7 @@ export default function Home() {
     const [recommendedRecipes, setRecommendedRecipes] = useState({});
     const [isLogged, setIsLogged] = useState(false);
     const [statusMessage, setStatusMessage] = useState();
+    const [modalViewRecipe, setModalViewRecipe] = useState(false);
     const [modalEditRecipe, setModalEditRecipe] = useState(false);
     const [modalDeleteRecipe, setModalDeleteRecipe] = useState(false);
     const [selectedIdRecipe, setSelectedIdRecipe] = useState("");
@@ -151,17 +153,19 @@ export default function Home() {
     return (
         <>
             <Grid container padding={"20px"} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                {Array.from(recommendedRecipes).map((recipe, index) => (
+                {Array.from([recipes]).map((recipe, index) => (
                     <Grid item xs={2} sm={4} md={4} key={index} onClick={()=> console.log("Hola")}>
                         <Item className={styles.item}>
                             <div className={styles.card}>
+                                <CardActionArea onClick={() => setModalViewRecipe(true)}>
+                                    <CardMedia
+                                        component="img"
+                                        alt=""
+                                        height="200"
+                                        image={recipe.imageUrl}
+                                    />
+                                </CardActionArea>
 
-                                <CardMedia
-                                    component="img"
-                                    alt=""
-                                    height="200"
-                                    image={recipe.imageUrl}
-                                />
                             </div>
                             <h2>{recipe.name}</h2>
 
@@ -217,6 +221,19 @@ export default function Home() {
                         <Button
                             className={styles.cancelButton}
                             onClick={() => setModalDeleteRecipe(false)}
+                        >
+                            <CancelIcon className={styles.buttonIcon} /> Cancel
+                        </Button>
+                    </div>
+                </Box>
+            </Modal>
+            <Modal open={modalViewRecipe} onClose={() => setModalViewRecipe(false)}>
+                <Box bgcolor={"white"} className={styles.modalView}>
+                    <div>
+
+                        <Button
+                            className={styles.cancelButton}
+                            onClick={() => setModalViewRecipe(false)}
                         >
                             <CancelIcon className={styles.buttonIcon} /> Cancel
                         </Button>
