@@ -7,14 +7,17 @@ export const validateInput = (input, type, setState, setError) => {
     setState(input);
 }
 
-export const postComment = (text) => {
-    
-}
 
 
-export function fetchData(idRecipe, setData) {
+export function fetchData(idRecipe, setData, setLoading, setCurrentUserRating, username, setCommentText) {
     
     axios.get(`${backendUrl}/api/v1/ratings/findByRecipeId/${idRecipe}`).then((res) => {
+      res.data.forEach((item) => {
+        if (item.idUser === username) {
+          setCurrentUserRating(item);
+          setCommentText(item.comment);
+        }
+        });
         setData(res.data);
         setLoading(false);
     }).catch((err) => {
@@ -46,7 +49,6 @@ export const postRating = (like, comment, username, idRecipe) => {
 
 export const putRating = (like, comment, data) => {
 
-    console.log("HACIENDO EL PPUUUUUUT");
     return axios.put(`${backendUrl}/api/v1/ratings/${data._id}`, {
         like: like,
         comment: comment,
@@ -61,9 +63,26 @@ export const putRating = (like, comment, data) => {
       });
 }
 
+export const putEditComment = (comment, data) => {
+
+  return axios.put(`${backendUrl}/api/v1/ratings/${data._id}`, {
+      like: data.like,
+      comment: comment,
+      idUser: data.idUser,
+      idRecipe: data.idRecipe
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+
+
+
 export const deleteRating = (idRating) => {
-
-
     return axios.delete(`${backendUrl}/api/v1/ratings/${idRating}`)
       .then(function (response) {
         console.log(response);

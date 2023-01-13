@@ -12,13 +12,13 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
-export default function RecipeBookItem({name, summary}) {
+export default function RecipeBookItem({data}) {
 
   return (
     <>
       <Item style={{ borderRadius: "20px", width: "300px", height: "auto", padding: "20px", margin: "20px", userSelect: "none", cursor: "pointer" }}>
-        <h1>{name}</h1>
-        <p>{summary}</p>
+        <h1>{data.name}</h1>
+        <p>{data.summary}</p>
       </Item>
     </>
   );

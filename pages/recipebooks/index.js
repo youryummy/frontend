@@ -1,6 +1,6 @@
-import RecipeBookItem from "../../components/recipebooks/RecipeBookItem";
-import RecipeBookHeader from "../../components/recipebooks/RecipeBookHeader";
-import RecipeBookEdit from "../../components/recipebooks/RecipeBookEdit";
+import RecipeBookItem from "./components/RecipeBookItem";
+import RecipeBookHeader from "./components/RecipeBookHeader";
+import RecipeBookEdit from "./components/RecipeBookEdit";
 import { useEffect, useState } from "react";
 import styles from "./RecipeBooks.module.css";
 import IconButton from "@mui/material/IconButton";
@@ -37,15 +37,13 @@ export default function RecipeBooks() {
           <div className={styles.bookList}>
             {recipebooks.map((item) => (
               <Link
+                key="{item}"
                 href={{
                   pathname: "/recipebooks/[recipebook]",
                   query: { idRecipeBook: item._id },
                 }}
               >
-                <RecipeBookItem
-                  name={item.name}
-                  summary={item.summary}
-                ></RecipeBookItem>
+                <RecipeBookItem data={item}></RecipeBookItem>
               </Link>
             ))}
           </div>
@@ -56,7 +54,6 @@ export default function RecipeBooks() {
     return (
       <RecipeBookEdit
         setCreate={setCreate}
-        saveFunction={addRecipeBook}
         username={username}
       ></RecipeBookEdit>
     );

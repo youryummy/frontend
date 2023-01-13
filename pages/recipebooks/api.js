@@ -22,8 +22,9 @@ export function fetchData(username, setData, setLoading) {
 }
 
 export function fetchRecipeBook(recipeBookId, setData, setLoading) {
-  axios
-    .get(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`)
+  console.log("fetch aqui "+`${backendUrl}/api/v1/recipesBooks/`+recipeBookId)
+
+  axios.get(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`)
     .then((res) => {
       setData(res.data);
       setLoading(false);
@@ -40,8 +41,7 @@ export function fetchRecipeBook(recipeBookId, setData, setLoading) {
 }
 
 export const addRecipeBook = (name, summary, username) => {
-  return axios
-    .post(`${backendUrl}/api/v1/recipesBooks`, {
+  return axios.post(`${backendUrl}/api/v1/recipesBooks`, {
       name: name,
       summary: summary,
       recipeList: [],
@@ -70,6 +70,18 @@ export const editRecipeBook = (name, summary, data) => {
       console.log(error);
     });
 };
+
+export const deleteRecipeBook = (recipeBookId) =>{
+    console.log("borro aqui "+`${backendUrl}/api/v1/recipesBooks/`+recipeBookId)
+    return axios
+      .delete(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
 export const validateInput = (input, type, setState, setError) => {
   setState(input);

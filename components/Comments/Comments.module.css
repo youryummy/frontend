@@ -59,6 +59,7 @@
     justify-content: flex-end;
     align-items: center;
     margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .item{
@@ -70,10 +71,16 @@
 .cancelButton{
     color: white!important;
     background-color: #c5c5c5!important;
+    margin-right: 10px;
 }
 
 .deleteButtons{
     display: flex;
     justify-content: flex-end;
     margin-top: 30px;
+}
+
+.deleteButton{
+    color: white!important;
+    background-color: red!important;
 }

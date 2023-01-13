@@ -2,8 +2,13 @@ import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { TextField, Button } from "@mui/material";
 import { useState, useEffect } from "react";
-import { validateInput, saveRecipeBook } from "../../pages/recipebooks/api";
-import styles from "../../pages/recipebooks/RecipeBooks.module.css";
+import {
+  validateInput,
+  addRecipeBook,
+  editRecipeBook,
+  deleteRecipeBook,
+} from "../api";
+import styles from "../RecipeBooks.module.css";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -13,12 +18,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function RecipeBookEdit({
-  data,
-  username,
-  setCreate,
-  saveFunction,
-}) {
+export default function RecipeBookEdit({ data, username, setCreate }) {
   const [newName, setName] = useState("");
   const [isNew, setIsNew] = useState(true);
   const [newSummary, setSummary] = useState("");
@@ -68,6 +68,19 @@ export default function RecipeBookEdit({
           variant="outlined"
         />
         <div className={styles.saveButtonContainer}>
+          {!isNew ? (
+          <Button
+            onClick={() => {
+              deleteRecipeBook(data._id);
+              setCreate(false);
+            }}
+            className={styles.deleteButton}
+            variant="contained"
+          >
+            Delete
+          </Button>
+          ) : ""}
+          <div style={{width: "100%"}}></div>
           <div style={{ marginRight: "10px" }}>
             <Button
               onClick={() => setCreate(false)}
@@ -80,8 +93,8 @@ export default function RecipeBookEdit({
           <Button
             onClick={() => {
               isNew
-                ? saveFunction(newName, newSummary, username)
-                : saveFunction(newName, newSummary, data);
+                ? addRecipeBook(newName, newSummary, username)
+                : editRecipeBook(newName, newSummary, data);
               setCreate(false);
             }}
             className={styles.saveButton}

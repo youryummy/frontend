@@ -5,8 +5,9 @@ import styles from "./Comments.module.css";
 import Comment from "./Comment";
 import { TextField, Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import { validateInput, postComment } from "./api";
-import { fetchData, postRating } from "./api";
+import { validateInput, postRating } from "./api";
+import { fetchData, putEditComment, deleteRating } from "./api";
+import {_} from "lodash";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -16,26 +17,29 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export function checkComment(username, setShowAddComment, comments) {
-  comments.forEach((item) => {
-    if (item.idUser === username) {
-      setShowAddComment(false);
-    }
-  });
-}
+export function checkComment(username, setShowAddComment, comments) {}
 
 export default function CommentsList() {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [like, setLike] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showAddComment, setShowAddComment] = useState(true);
+  const [currentUserRating, setCurrentUserRating] = useState({});
+  const [showEditComment, setShowEditComment] = useState(false);
   const [error, setError] = useState({ newComment: "" });
   const idRecipe = "jfkdlfdsfdsjsakalks"; //TODO
   const username = "Deyan"; //TODO
 
   useEffect(() => {
-    fetchData(idRecipe, setComments)
-    checkComment(username, setShowAddComment, comments);
+    fetchData(
+      idRecipe,
+      setComments,
+      setLoading,
+      setCurrentUserRating,
+      username,
+      setCommentText
+    );
   }, []);
 
   return (
@@ -49,7 +53,7 @@ export default function CommentsList() {
         }}
       >
         <h1>Comments</h1>
-        {showAddComment ? (
+        {currentUserRating.comment === "" || JSON.stringify(currentUserRating) === '{}' || showEditComment ? (
           <div>
             <TextField
               value={commentText}
@@ -68,10 +72,31 @@ export default function CommentsList() {
               label="Add Comment"
               variant="outlined"
             />
+
             <div className={styles.postButtonContainer}>
+              {showEditComment ? (
+            <div style={{ marginRight: "10px", display: "flex", width: "100%" }}>
+            <Button
+                onClick={() => deleteRating(currentUserRating._id)}
+                className={styles.deleteButton}
+                variant="contained"
+              >
+                Delete
+              </Button>
+              <div style={{width: "100%"}}></div>
+            <Button
+                onClick={() => setShowEditComment(false)}
+                className={styles.cancelButton}
+                variant="contained"
+              >
+                Cancel
+              </Button>
+              </div>) : ""}
               <Button
                 onClick={() =>
-                  postRating(like, commentText, username, idRecipe)
+                  showEditComment
+                    ? putEditComment(commentText, currentUserRating)
+                    : postRating(like, commentText, username, idRecipe)
                 }
                 className={styles.postButton}
                 variant="contained"
@@ -83,11 +108,13 @@ export default function CommentsList() {
         ) : (
           ""
         )}
-        {comments.map((item) => (
+        {comments.map((item, index) => (
           <Comment
+            key={index}
             name="TODO"
             data={item}
             idUser={username}
+            setShowEditComment={setShowEditComment}
             img="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
           >
             {" "}
