@@ -35,14 +35,14 @@ export async function tokenExchange(code) {
   return access_token;
 }
 
-export async function editEvent(eventId, timestamp, synced) {
+export function editEvent(eventId, timestamp, synced) {
   const endpoint = "events";
   const body = {
     id: eventId,
     timestamp: timestamp,
     synced: synced,
   };
-  return await apiPut(endpoint, body);
+  return apiPut(endpoint, body);
 }
 
 export async function loginWithGoogle(refreshToken) {
