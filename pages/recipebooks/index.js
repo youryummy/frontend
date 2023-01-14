@@ -49,13 +49,12 @@ export default function RecipeBooks() {
 
   if (!showCreate)
     return (
-      <div>
+      <div style={{padding: "10px 30px"}}>
         <IconButton
           onClick={() => setShowCreate(true)}
           aria-label="delete"
           size="large"
           color="default"
-          style={{ margin: "25px" }}
         >
           <AddIcon fontSize="inherit" />
         </IconButton>
@@ -71,8 +70,7 @@ export default function RecipeBooks() {
               <Link
                 key={index}
                 href={{
-                  pathname: "/recipebooks/[recipebook]",
-                  query: { idRecipeBook: item._id },
+                  pathname: `/recipebooks/${item._id}`
                 }}
               >
                 <RecipeBookItem data={item}></RecipeBookItem>

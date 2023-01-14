@@ -18,15 +18,15 @@ export default function RecipeBookHeader({ data, setEdit}) {
       <Item
         style={{
           borderRadius: "20px",
-          width: "90%",
+          width: "100%",
           height: "auto",
           padding: "20px",
           margin: "20px",
         }}
       >
-        <div style={{display: "flex", justifyContent: "center"}}>
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
           <h1 style={{marginRight: "5px"}}>{data.name}</h1>
-          <IconButton onClick={() => setEdit(true) } aria-label="edit" size="small" color="default">
+          <IconButton onClick={() => setEdit(true) } aria-label="edit" size="medium" color="default">
             <EditIcon fontSize="inherit" />
           </IconButton>
         </div>
