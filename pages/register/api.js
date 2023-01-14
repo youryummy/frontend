@@ -54,11 +54,11 @@ export const register = (data, setError) => {
     formData.append("Avatar", avatarFile ?? "");
     formData.append("AccountInfo", JSON.stringify(data));
 
-    axios.post(`${backendUrl}/api/v1/register`, formData, 
+    return axios.post(`${backendUrl}/api/v1/register`, formData, 
     {   withCredentials: true,
         headers: { "content-type": "multipart/form-data"}
-    }).then(() => {
-        login(data.username, data.password);
+    }).then(async () => {
+        await login(data.username, data.password);
     }).catch((err) => {
         alert(err.response?.data.message ?? err.response?.data.error ?? "Could not connect to server, please try again later");
     });

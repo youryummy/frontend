@@ -3,13 +3,15 @@ import styles from "./Register.module.css";
 import Paper from "@mui/material/Paper";
 import Logo from "../../public/logo.png";
 import { validateField, register } from "./api";
-import { TextField, Button, IconButton } from "@mui/material";
+import { TextField, Button } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
 import UploadImage from "../../components/UploadImage.js";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Login() {
   const router = useRouter();
+  const [ loadingButton, setLoadingButton ] = useState(false);
   const [data, setData] = useState({username: "", password: "", fullName: "", avatar: null, email: "", birthDate: "", cellPhone: ""});
   const [error, setError] = useState({username: "", password: "", fullName: "", email: "", birthDate: "", cellPhone: ""});
 
@@ -44,7 +46,12 @@ export default function Login() {
         { /* Back and save buttons*/ }
         <div style={{display: "flex", flexDirection: "row", gap: "20px", width: "100%"}}>
           <Button onClick={() => router.push("/login")} className={styles.backButton} variant="contained">Back</Button>
-          <Button onClick={() => register(data, setError)} className={styles.saveButton} variant="contained">Save</Button>
+          <Button onClick={() => {setLoadingButton(true); register(data, setError).finally(() => setLoadingButton(false))}} className={styles.saveButton} variant="contained" disabled={loadingButton}>
+            {loadingButton ? 
+              <CircularProgress size={24} color="inherit" /> :
+              "Save"
+            }
+          </Button>
         </div>
       </Paper>
     </div>
