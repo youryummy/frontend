@@ -23,12 +23,12 @@ const AppWrapper = ({ Component, pageProps }) => {
         <CookieConsent
           visible={showCookieConsent}
           style={{ background: "#772318" }}
-          buttonText="Acepto"
+          buttonText="Accept"
           buttonStyle={{ backgroundColor: 'white' }}
           expires={150}
           hideOnAccept
           onAccept={() => setShowCookieConsent("hidden")}>
-          Esta web utiliza cookies para mejorar su experiencia de navegación. Consulte los <a href="/about/terms"><b>términos del servicio</b></a> para más información. Si continúa navegando, consideramos que acepta su uso.
+          This website uses cookies to improve your browsing experience. See the <a href="/about/terms" style={{color: "white"}}><b>terms of service</b></a> for more information. If you continue browsing, we consider that you accept its use.
         </CookieConsent>
       </PersistGate>
     </Provider>

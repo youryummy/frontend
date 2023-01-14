@@ -1,10 +1,25 @@
 import axios from "axios";
-import { login } from "../login/api.js";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-export const setField = (setData, data, field) => {
-    setData((prev) => ({...prev, [field]: data && field === "avatar" ? {url: URL.createObjectURL(data), file: data} : data}));
+export function fetchData(path, setData, setLoading,) {
+    axios.get(`${backendUrl}${path}`, {withCredentials: true}).then((res) => {
+        setData(res.data);
+        setLoading(false);
+    }).catch((err) => {
+        if (err.response?.status === 404) {
+            setData(null);
+            setLoading(false);
+        } else {
+            console.log(err);
+            alert("Something went wrong, please try again later.");
+        }
+    });
+}
+
+const setField = (setData, data, field) => {
+    setData((prev) => ({...prev, [field]: data}));
 }
 
 export const validateField = (setData, setError, data, field) => {
@@ -14,8 +29,7 @@ export const validateField = (setData, setError, data, field) => {
             else setError((prev) => ({...prev, [field]: ""}));
             break;
         case "password":
-            if (data.length === 0) setError((prev) => ({...prev, [field]: "Cannot be empty"}));
-            else if (!(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*-_])(?=.{8,})/).test(data)) setError((prev) => ({...prev, [field]: "Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter and 1 number"}));
+            if (data.length > 0 && !(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*-_])(?=.{8,})/).test(data)) setError((prev) => ({...prev, [field]: "Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter and 1 number"}));
             else setError((prev) => ({...prev, [field]: ""}));
             break;
         case "fullName":
@@ -39,10 +53,9 @@ export const validateField = (setData, setError, data, field) => {
     setField(setData, data, field);
 }
 
-export const register = (data, setError) => {
+export const modify = (username, data, setError, setEdit) => {
     let avatarFile;
-    if (data.username === "") return setError((prev) => ({...prev, username: "Cannot be empty"}));
-    if (data.password === "") return setError((prev) => ({...prev, password: "Cannot be empty"}));
+    data.username = username;
     if (data.fullName === "") return setError((prev) => ({...prev, fullName: "Cannot be empty"}));
     if (data.email === "") return setError((prev) => ({...prev, email: "Cannot be empty"}));
     if (data.birthDate === "") delete data.birthDate;
@@ -54,12 +67,42 @@ export const register = (data, setError) => {
     formData.append("Avatar", avatarFile ?? "");
     formData.append("AccountInfo", JSON.stringify(data));
 
-    axios.post(`${backendUrl}/api/v1/register`, formData, 
+    return axios.put(`${backendUrl}/api/v1/accounts/${username}`, formData, 
     {   withCredentials: true,
         headers: { "content-type": "multipart/form-data"}
-    }).then(() => {
-        login(data.username, data.password);
+    }).then(async () => {
+        if (avatarFile) await delay(1500); // wait to avoid 403 error
+        setEdit(false);
     }).catch((err) => {
-        alert(err.response?.data.message ?? err.response?.data.error ?? "Could not connect to server, please try again later");
+        if (err.response?.status === 400) alert(err.response.data.message);
+        else alert(err.response?.data.message ?? err.response?.data.error ?? "Could not connect to server, please try again later");
+    });
+}
+
+export const upgradePlan = (username, plan, data) => {
+    data.plan = plan;
+
+    const formData = new FormData();
+    formData.append("Avatar", "");
+    formData.append("AccountInfo", JSON.stringify(data));
+
+    return axios.put(`${backendUrl}/api/v1/accounts/${username}`, formData, 
+    {   withCredentials: true,
+        headers: { "content-type": "multipart/form-data"}
+    });
+}
+
+export const logOutGoogle = () => {
+    return axios.get(`${backendUrl}/api/v1/events/logout`, {withCredentials: true});
+}
+
+export const deleteAccount = (username) => {
+    axios.delete(`${backendUrl}/api/v1/accounts/${username}`, {withCredentials: true})
+    .then(() => {
+        window.location.href = "/";
+    })
+    .catch((err) => {
+        console.log(err);
+        alert("Account could not be deleted, please try again later.");
     });
 }

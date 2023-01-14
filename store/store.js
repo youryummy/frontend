@@ -1,11 +1,13 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import token from "./token";
+import googleLogin from "./googleLogin";
 import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
 import thunk from "redux-thunk";
 
 const rootReducer = combineReducers({
   token,
+  googleLogin,
 });
 
 const persistConfig = {
