@@ -4,9 +4,9 @@ import Paper from "@mui/material/Paper";
 import styles from "./Comments.module.css";
 import Comment from "./Comment";
 import { TextField, Button } from "@mui/material";
-import { useState } from "react";
-import { validateInput, postComment} from "./api";
-
+import { useEffect, useState, useMemo } from "react";
+import { validateInput, postRating } from "./api";
+import { fetchData, putEditComment, deleteRating, putLike } from "./api";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -16,23 +16,169 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-
 export default function CommentsList() {
-  const [newComment, setComment] = useState("");
-  const [error, setError] = useState({newComment: ""});
+  const [ratings, setRatings] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [like, setLike] = useState(false);
+  const [currentUserRating, setCurrentUserRating] = useState({});
+  const [showEditComment, setShowEditComment] = useState(false);
+  const [error, setError] = useState({ newComment: "" });
+  const idRecipe = "nueva"; //TODO
+  const username = "Deyan"; //TODO
+
+  useEffect(() => {
+    getCurrentRatings();
+  }, []);
+
+  const getCurrentRatings = useMemo(() => {
+    return () => {
+      setCurrentUserRating({});
+      setCommentText("");
+      fetchData(idRecipe)
+        .then((res) => {
+          res.data.forEach((item) => {
+            if (item.idUser === username) {
+              setCurrentUserRating(item);
+              setCommentText(item.comment);
+            }
+          });
+          setRatings(res.data.reverse());
+        })
+        .catch((err) => {
+          if (err.response?.status === 404) {
+            setRatings(null);
+            
+          } else {
+            console.log(err);
+            alert("Something went wrong, please try again later.");
+          }
+        });
+    };
+  }, []);
+
+  const checkDeleteComment = async() => {
+    if (!currentUserRating.like) {
+      await deleteRating(currentUserRating._id);
+    } else {
+      await putEditComment("", currentUserRating);
+    }
+    setShowEditComment(false);
+    getCurrentRatings();
+  }
+
+  const checkLikeComment = async(like) => {
+    await putLike(like, currentUserRating);
+    getCurrentRatings();
+  }
+
+  const checkPostComment = async(
+    currentUserRating,
+    like,
+    commentText,
+    username,
+    idRecipe
+  ) => {
+    if (JSON.stringify(currentUserRating) === "{}") {
+      await postRating(like, commentText, username, idRecipe);
+    } else {
+      await putEditComment(commentText, currentUserRating);
+    }
+    setShowEditComment(false);
+    getCurrentRatings();
+  }
 
   return (
     <>
-      <Item style={{ borderRadius: "20px", height: "auto", padding: "20px", margin: "20px" }}>
+      <Item
+        style={{
+          borderRadius: "20px",
+          height: "auto",
+          padding: "20px",
+          margin: "20px",
+        }}
+      >
         <h1>Comments</h1>
-        <TextField value={newComment} onChange={(ev) => validateInput(ev.target.value, "newComment", setComment, setError)}  helperText={error.newComment} className={styles.formInput} multiline rows={4} label="Add Comment" variant="outlined" />
-        <div className={styles.postButtonContainer}>
-        <Button onClick={() => postComment(newComment)} className={styles.postButton} variant="contained">Post</Button>
+        {currentUserRating.comment === "" ||
+        JSON.stringify(currentUserRating) === "{}" ||
+        showEditComment ? (
+          <div>
+            <TextField
+              value={commentText}
+              onChange={(ev) =>
+                validateInput(
+                  ev.target.value,
+                  "newComment",
+                  setCommentText,
+                  setError
+                )
+              }
+              helperText={error.newComment}
+              className={styles.formInput}
+              multiline
+              rows={4}
+              label="Add Comment"
+              variant="outlined"
+            />
 
-        </div>
-        <Comment name="Deyan" like={true} text="texto prueba" img="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" byUser={true} > </Comment>
-        <Comment name="Deyan" like={false} text="texto prueba" img="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" byUser={false} > </Comment>
-
+            <div className={styles.postButtonContainer}>
+              {showEditComment ? (
+                <div
+                  style={{
+                    marginRight: "10px",
+                    display: "flex",
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    onClick={() => checkDeleteComment(currentUserRating)}
+                    className={styles.deleteButton}
+                    variant="contained"
+                  >
+                    Delete
+                  </Button>
+                  <div style={{ width: "100%" }}></div>
+                  <Button
+                    onClick={() => setShowEditComment(false)}
+                    className={styles.cancelButton}
+                    variant="contained"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                ""
+              )}
+              <Button
+                onClick={() =>
+                  checkPostComment(
+                    currentUserRating,
+                    like,
+                    commentText,
+                    username,
+                    idRecipe
+                  )
+                }
+                className={styles.postButton}
+                variant="contained"
+              >
+                Post
+              </Button>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {ratings.map((item, index) => (
+          <Comment
+            key={index}
+            data={item}
+            putLike={checkLikeComment}
+            idUser={username}
+            setShowEditComment={setShowEditComment}
+          >
+            {" "}
+          </Comment>
+        ))}
       </Item>
     </>
   );

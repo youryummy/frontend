@@ -3,44 +3,46 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
-import DeleteCommentModal from "./DeleteCommentModal";
 
-export default function Comment({ name, like, text, img, byUser }) {
+
+export default function Comment({ data, idUser, setShowEditComment, putLike}) {
   return (
     <>
       <div className={styles.comment}>
         <div className={styles.pfpContainer}>
-          <img src={img} className={styles.commentPfp} />
+          <img src={data.hasOwnProperty('avatar') ? data.avatar  :"https://ionicframework.com/docs/img/demos/avatar.svg"} className={styles.commentPfp} />
         </div>
         <div>
           <div className={styles.commentLine}>
-            <p className={styles.commentName}>{name}</p>
+            <p className={styles.commentName}>{data.hasOwnProperty('fullName') ? data.fullName  :"SinNombre"}</p>
 
-            {byUser ? (
+            {idUser === data.idUser ? (
               <div className={styles.commentLine}>
-                {like ? (
-                  <IconButton aria-label="like" size="small" color="default">
+                {data.like ? (
+                  <IconButton onClick={() => putLike(false)}  aria-label="like" size="small" color="default">
                     <FavoriteIcon fontSize="inherit"/>
                   </IconButton>
                 ) : (
-                  <IconButton aria-label="like" size="small" color="default">
+                  <IconButton onClick={() => putLike(true)} aria-label="like" size="small" color="default">
                     <FavoriteBorderIcon  fontSize="inherit"/>
                   </IconButton>
                 )}
-                 <IconButton aria-label="edit"  size="small" color="default">
+                {data.comment === "" ? (
+                 ""
+                ) : (
+                  <IconButton  onClick={() => setShowEditComment(true)} aria-label="edit"  size="small" color="default">
                   <EditIcon fontSize="inherit"/>
                 </IconButton>
-                <DeleteCommentModal></DeleteCommentModal>
-
+                  )}
               </div>
             ) : (
               <div className={styles.commentLine}>
-                {like ? (
-                  <IconButton aria-label="like" disabled  size="small"  color="default">
+                {data.like ? (
+                  <IconButton   aria-label="like" disabled  size="small"  color="default">
                     <FavoriteIcon fontSize="inherit" />
                   </IconButton>
                 ) : (
-                  <IconButton aria-label="like" disabled  size="small" color="default">
+                  <IconButton   aria-label="like" disabled  size="small" color="default">
                     <FavoriteBorderIcon fontSize="inherit" />
                   </IconButton>
                 )}
@@ -48,7 +50,7 @@ export default function Comment({ name, like, text, img, byUser }) {
             )}
           </div>
 
-          <p className={styles.commentText}>{text}</p>
+          <p className={styles.commentText}>{data.comment}</p>
         </div>
       </div>
     </>

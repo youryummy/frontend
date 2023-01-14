@@ -1,26 +1,57 @@
-import RecipeBookItem from "../../components/recipebooks/RecipeBookItem";
-import RecipeBookHeader from "../../components/recipebooks/RecipeBookHeader";
-import RecipeBookEdit from "../../components/recipebooks/RecipeBookEdit";
-import { useEffect, useState } from "react";
+import RecipeBookItem from "./components/RecipeBookItem";
+import RecipeBookHeader from "./components/RecipeBookHeader";
+import RecipeBookEdit from "./components/RecipeBookEdit";
+import { useEffect, useState, useMemo } from "react";
 import styles from "./RecipeBooks.module.css";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
-import { apiGet, fetchData } from "../../api/recipebooksApi";
+import { fetchData, addRecipeBook } from "./api";
+import Link from "next/Link";
+import AddToRecipeBookModal from "./components/addToRecipeBookModal";
+import { useSelector } from "react-redux";
 
 export default function RecipeBooks() {
   const [recipebooks, setRecipebooks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [create, setCreate] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+  const username = useSelector((state) => state.token?.username);
+
   useEffect(() => {
-    console.log("Aquiiiiiiiii");
-    fetchData("/api/v1/recipesBooks/findByUserId/Sumia", setRecipebooks);
+    getCurrentRecipeBooks();
   }, []);
 
-  if (!create)
+  const getCurrentRecipeBooks = useMemo(() => {
+    return () => {
+      fetchData(username)
+        .then((res) => {
+          setRecipebooks(res.data);
+        })
+        .catch((err) => {
+          if (err.response?.status === 404) {
+            setRecipebooks(null);
+          } else {
+            console.log(err);
+            alert("Something went wrong, please try again later.");
+          }
+        });
+    };
+  }, []);
+
+  const checkSaveRecipeBook = async (
+    newName,
+    newSummary,
+    currentRecipeBook
+  ) => {
+    await addRecipeBook(newName, newSummary, username);
+
+    setShowCreate(false);
+    getCurrentRecipeBooks();
+  };
+
+  if (!showCreate)
     return (
       <div>
         <IconButton
-          onClick={() => setCreate(true)}
+          onClick={() => setShowCreate(true)}
           aria-label="delete"
           size="large"
           color="default"
@@ -28,20 +59,35 @@ export default function RecipeBooks() {
         >
           <AddIcon fontSize="inherit" />
         </IconButton>
-        <div className={styles.bookList}>
-          {recipebooks.map((item) => (
-            <RecipeBookItem
-              name={item.name}
-              summary={item.summary}
-            ></RecipeBookItem>
-          ))}
-        </div>
 
-        <RecipeBookHeader
-          name="Book Name"
-          summary="Book description lalaalal"
-        ></RecipeBookHeader>
+        <AddToRecipeBookModal></AddToRecipeBookModal>
+        
+
+        {recipebooks.length === 0 ? (
+          ""
+        ) : (
+          <div className={styles.bookList}>
+            {recipebooks.map((item, index) => (
+              <Link
+                key={index}
+                href={{
+                  pathname: "/recipebooks/[recipebook]",
+                  query: { idRecipeBook: item._id },
+                }}
+              >
+                <RecipeBookItem data={item}></RecipeBookItem>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     );
-  else return <RecipeBookEdit setCreate={setCreate}></RecipeBookEdit>;
+  else
+    return (
+      <RecipeBookEdit
+        checkSaveRecipeBook={checkSaveRecipeBook}
+        setShowCreate={setShowCreate}
+        username={username}
+      ></RecipeBookEdit>
+    );
 }
