@@ -91,3 +91,14 @@ export const upgradePlan = (username, plan, data) => {
         headers: { "content-type": "multipart/form-data"}
     });
 }
+
+export const deleteAccount = (username) => {
+    axios.delete(`${backendUrl}/api/v1/accounts/${username}`, {withCredentials: true})
+    .then(() => {
+        window.location.href = "/";
+    })
+    .catch((err) => {
+        console.log(err);
+        alert("Account could not be deleted, please try again later.");
+    });
+}

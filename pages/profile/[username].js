@@ -12,10 +12,11 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import CircularProgress from '@mui/material/CircularProgress';
 import SadFace from '@mui/icons-material/SentimentVeryDissatisfied';
-import { validateField, modify, upgradePlan } from "./api";
+import { validateField, modify, upgradePlan, deleteAccount } from "./api";
 
 import UploadImage from "../../components/UploadImage.js";
 import Plans from "../../components/Plans.js";
@@ -68,9 +69,15 @@ export default function Profile() {
             </div>
           </div>
           { username === tokenUsername ?
-            <IconButton onClick={() => setEdit(true)} sx={{position: "absolute", right: "15px", top: "15px"}} aria-label="delete" size="large">
-            <EditIcon fontSize="inherit" />
-          </IconButton> : null
+            <span style={{position: "absolute", right: "15px", top: "15px", display: "inline-flex"}}>
+            <IconButton onClick={() => {confirm("Are you sure you want to delete the account?") ? deleteAccount(username) : null}} aria-label="delete" size="large">
+              <DeleteIcon fontSize="inherit" color="error" />
+            </IconButton> 
+            <IconButton onClick={() => setEdit(true)}  aria-label="modify" size="large">
+              <EditIcon fontSize="inherit" />
+            </IconButton> 
+            </span>
+            : null
           }
         </Paper>
 
