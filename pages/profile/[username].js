@@ -4,7 +4,6 @@ import styles from "./Profile.module.css";
 import Paper from "@mui/material/Paper";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import { fetchData } from "./api";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,7 +15,14 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CircularProgress from "@mui/material/CircularProgress";
 import SadFace from "@mui/icons-material/SentimentVeryDissatisfied";
-import { validateField, modify, upgradePlan, logOutGoogle, deleteAccount } from "./api";
+import {
+  validateField,
+  modify,
+  upgradePlan,
+  logOutGoogle,
+  deleteAccount,
+  fetchData,
+} from "../../api/profileApi";
 import { setState as isUserGoogleLogin } from "../../store/googleLogin";
 
 import UploadImage from "../../components/UploadImage.js";
@@ -213,17 +219,35 @@ export default function Profile() {
               </Modal>
             </div>
           </div>
-          { username === tokenUsername ?
-            <span style={{position: "absolute", right: "15px", top: "15px", display: "inline-flex"}}>
-            <IconButton onClick={() => {confirm("Are you sure you want to delete the account?") ? deleteAccount(username) : null}} aria-label="delete" size="large">
-              <DeleteIcon fontSize="inherit" color="error" />
-            </IconButton> 
-            <IconButton onClick={() => setEdit(true)}  aria-label="modify" size="large">
-              <EditIcon fontSize="inherit" />
-            </IconButton> 
+          {username === tokenUsername ? (
+            <span
+              style={{
+                position: "absolute",
+                right: "15px",
+                top: "15px",
+                display: "inline-flex",
+              }}
+            >
+              <IconButton
+                onClick={() => {
+                  confirm("Are you sure you want to delete the account?")
+                    ? deleteAccount(username)
+                    : null;
+                }}
+                aria-label="delete"
+                size="large"
+              >
+                <DeleteIcon fontSize="inherit" color="error" />
+              </IconButton>
+              <IconButton
+                onClick={() => setEdit(true)}
+                aria-label="modify"
+                size="large"
+              >
+                <EditIcon fontSize="inherit" />
+              </IconButton>
             </span>
-            : null
-          }
+          ) : null}
         </Paper>
         {
           //TODO Add recipe cards
@@ -235,10 +259,42 @@ export default function Profile() {
       <div className={styles.profileComponent}>
         <Paper className={styles.card} elevation={6}>
           <div className={styles.basicInfoForm}>
-            <UploadImage data={data} setData={setData} d={150}/>
-            <span style={{display: "flex", flexDirection: "column", gap: "30px", width: "100%"}}>
-              <TextField value={data.fullName} onChange={(ev) => validateField(setData, setError, ev.target.value, "fullName")} error={error.fullName.length > 0 ? true : false} helperText={error.fullName} className={styles.formInput} size="small" label="Name" variant="outlined" />
-              <TextField value={data.password} onChange={(ev) => validateField(setData, setError, ev.target.value, "password")} error={error.password.length > 0 ? true : false} helperText={error.password} className={styles.formInput} size="small" label="Password" variant="outlined" type="password" InputLabelProps={{ shrink: true}} placeholder={"New Password"}/>
+            <UploadImage data={data} setData={setData} d={150} />
+            <span
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "30px",
+                width: "100%",
+              }}
+            >
+              <TextField
+                value={data.fullName}
+                onChange={(ev) =>
+                  validateField(setData, setError, ev.target.value, "fullName")
+                }
+                error={error.fullName.length > 0 ? true : false}
+                helperText={error.fullName}
+                className={styles.formInput}
+                size="small"
+                label="Name"
+                variant="outlined"
+              />
+              <TextField
+                value={data.password}
+                onChange={(ev) =>
+                  validateField(setData, setError, ev.target.value, "password")
+                }
+                error={error.password.length > 0 ? true : false}
+                helperText={error.password}
+                className={styles.formInput}
+                size="small"
+                label="Password"
+                variant="outlined"
+                type="password"
+                InputLabelProps={{ shrink: true }}
+                placeholder={"New Password"}
+              />
             </span>
           </div>
           <TextField

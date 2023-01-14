@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setState as isGoogleLogin } from "../../store/googleLogin";
 import Button from "@mui/material/Button";
 import {
@@ -11,7 +11,7 @@ import {
   loginWithGoogle,
   getEvents,
   deleteEvent,
-} from "./api";
+} from "../../api/plannerApi";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -52,6 +52,7 @@ export default function Planner() {
   const [recipeHour, setRecipeHour] = useState("");
   const [selectedIdEvent, setSelectedIdEvent] = useState("");
   const [error, setError] = useState({ date: "" });
+  const tokenPlan = useSelector((state) => state.token?.plan);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -69,21 +70,23 @@ export default function Planner() {
 
   const getCurrentEvents = useMemo(() => {
     return () => {
-      getEvents().then((res) => {
-        setIsLogged(res.data["isLogged"]);
-        const eventsByDay = _.groupBy(res.data["events"], (event) => {
-          return new Date(event.timestamp * 1000).toLocaleDateString();
+      getEvents()
+        .then((res) => {
+          setIsLogged(res.data["isLogged"]);
+          const eventsByDay = _.groupBy(res.data["events"], (event) => {
+            return new Date(event.timestamp * 1000).toLocaleDateString();
+          });
+          const sortedEvents = _.sortBy(eventsByDay, (event) => {
+            return event[0].timestamp;
+          });
+          setGroupedEvents(sortedEvents);
+        })
+        .catch((error) => {
+          if (error.response.status === 500) {
+            window.alert(error.response.data["message"]);
+            return;
+          }
         });
-        const sortedEvents = _.sortBy(eventsByDay, (event) => {
-          return event[0].timestamp;
-        });
-        setGroupedEvents(sortedEvents);
-      }).catch((error) => {
-        if (error.response.status === 500) {
-          window.alert(error.response.data["message"]);
-          return;
-        }
-      });
     };
   }, []);
 
@@ -133,8 +136,7 @@ export default function Planner() {
         if (error.response.status === 400) {
           setError({ date: error.response.data["message"] });
           return;
-        }
-        else if (error.response.status === 500) {
+        } else if (error.response.status === 500) {
           window.alert(error.response.data["message"]);
           return;
         }
@@ -230,7 +232,7 @@ export default function Planner() {
 
   return (
     <>
-      {!isLogged /* Only show this buttom if the plan is not base */ ? (
+      {!isLogged && tokenPlan !== "base" ? (
         <div className={styles.container}>
           <Tooltip
             title="Login with Google to sync your events with your calendar"

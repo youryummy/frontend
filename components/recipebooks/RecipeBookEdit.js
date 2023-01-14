@@ -2,7 +2,7 @@ import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { TextField, Button } from "@mui/material";
 import { useState } from "react";
-import { validateInput, saveRecipeBook } from "../../pages/recipebooks/api";
+import { validateInput, saveRecipeBook } from "../../api/recipebooksApi";
 import styles from "../../pages/recipebooks/RecipeBooks.module.css";
 
 const Item = styled(Paper)(({ theme }) => ({
