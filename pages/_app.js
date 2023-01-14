@@ -28,7 +28,7 @@ const AppWrapper = ({ Component, pageProps }) => {
           expires={150}
           hideOnAccept
           onAccept={() => setShowCookieConsent("hidden")}>
-          This website uses cookies to improve your browsing experience. See the <a href="/about/terms"><b>terms of service</b></a> for more information. If you continue browsing, we consider that you accept its use.
+          This website uses cookies to improve your browsing experience. See the <a href="/about/terms" style={{color: "white"}}><b>terms of service</b></a> for more information. If you continue browsing, we consider that you accept its use.
         </CookieConsent>
       </PersistGate>
     </Provider>

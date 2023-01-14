@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setState as isGoogleLogin } from "../../store/googleLogin";
 import Button from "@mui/material/Button";
 import {
@@ -11,7 +11,7 @@ import {
   loginWithGoogle,
   getEvents,
   deleteEvent,
-} from "./api";
+} from "../../api/plannerApi";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -19,6 +19,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 import styles from "./Planner.module.css";
 import { useMemo } from "react";
 import _ from "lodash";
@@ -42,7 +44,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Planner() {
   const [groupedEvents, setGroupedEvents] = useState({});
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
   const [statusMessage, setStatusMessage] = useState();
   const [modalEditEvent, setModalEditEvent] = useState(false);
   const [modalDeleteEvent, setModalDeleteEvent] = useState(false);
@@ -50,6 +52,7 @@ export default function Planner() {
   const [recipeHour, setRecipeHour] = useState("");
   const [selectedIdEvent, setSelectedIdEvent] = useState("");
   const [error, setError] = useState({ date: "" });
+  const tokenPlan = useSelector((state) => state.token?.plan);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -67,16 +70,23 @@ export default function Planner() {
 
   const getCurrentEvents = useMemo(() => {
     return () => {
-      getEvents().then((res) => {
-        setIsLogged(res.data["isLogged"]);
-        const eventsByDay = _.groupBy(res.data["events"], (event) => {
-          return new Date(event.timestamp * 1000).toLocaleDateString();
+      getEvents()
+        .then((res) => {
+          setIsLogged(res.data["isLogged"]);
+          const eventsByDay = _.groupBy(res.data["events"], (event) => {
+            return new Date(event.timestamp * 1000).toLocaleDateString();
+          });
+          const sortedEvents = _.sortBy(eventsByDay, (event) => {
+            return event[0].timestamp;
+          });
+          setGroupedEvents(sortedEvents);
+        })
+        .catch((error) => {
+          if (error.response.status === 500) {
+            window.alert(error.response.data["message"]);
+            return;
+          }
         });
-        const sortedEvents = _.sortBy(eventsByDay, (event) => {
-          return event[0].timestamp;
-        });
-        setGroupedEvents(sortedEvents);
-      });
     };
   }, []);
 
@@ -92,7 +102,7 @@ export default function Planner() {
   };
 
   const getOauth2Code = () => {
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=${process.env.NEXT_PUBLIC_SCOPE}&access_type=offline&include_granted_scopes=true&response_type=code&state=code&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}`;
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=${process.env.NEXT_PUBLIC_SCOPE}&access_type=offline&include_granted_scopes=true&response_type=code&state=code&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&prompt=consent`;
     window.location.href = url;
   };
 
@@ -125,6 +135,9 @@ export default function Planner() {
       .catch((error) => {
         if (error.response.status === 400) {
           setError({ date: error.response.data["message"] });
+          return;
+        } else if (error.response.status === 500) {
+          window.alert(error.response.data["message"]);
           return;
         }
       });
@@ -213,13 +226,13 @@ export default function Planner() {
   };
 
   const cancelActionButton = () => {
-    setModalEditEvent(false)
+    setModalEditEvent(false);
     setError({ date: "" });
-  }
+  };
 
   return (
     <>
-      {!isLogged ? (
+      {!isLogged && tokenPlan !== "base" ? (
         <div className={styles.container}>
           <Tooltip
             title="Login with Google to sync your events with your calendar"
@@ -292,9 +305,24 @@ export default function Planner() {
                     </Tooltip>
                   </div>
                   <h2>{event.recipe.name}</h2>
+                  <Stack
+                    direction="row"
+                    style={{
+                      width: "100%",
+                      alignItems: "center",
+                      display: "flex",
+                      flexDirection: "wrap",
+                    }}
+                  >
+                    {event.recipe.tags.map((tag, id) => (
+                      <Chip
+                        label={tag}
+                        key={id}
+                        style={{ margin: "auto", marginBottom: "10px" }}
+                      />
+                    ))}
+                  </Stack>
                   <p>{event.recipe.description}</p>
-                  <p>{event.recipe.ingredients[0].name}</p>
-                  <p>{event.recipe.ingredients[1].name}</p>
                 </Item>
               </Grid>
             ))}
@@ -308,7 +336,9 @@ export default function Planner() {
             <div className={styles.modalHeader}>
               <div style={{ width: "100%" }}>
                 <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                <p>When do you want to cook this recipe?</p>
+                <p style={{ color: "black" }}>
+                  When do you want to cook this recipe?
+                </p>
                 <TextField
                   size="small"
                   label="Date"
@@ -323,7 +353,7 @@ export default function Planner() {
                   error={error.date.length > 0 ? true : false}
                   helperText={error.date}
                 />
-                <p>What time?</p>
+                <p style={{ color: "black" }}>What time?</p>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Time</InputLabel>
                   <Select
@@ -363,7 +393,9 @@ export default function Planner() {
             <div className={styles.modalHeader}>
               <div style={{ width: "100%" }}>
                 <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                <p>Are you sure you want to delete this event?</p>
+                <p style={{ color: "black" }}>
+                  Are you sure you want to delete this event?
+                </p>
               </div>
             </div>
             <Button

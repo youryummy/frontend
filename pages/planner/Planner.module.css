@@ -35,6 +35,7 @@
 .item {
   border-radius: 20px !important;
   height: 350px;
+  overflow-y: auto;
 }
 
 .actionButton {
