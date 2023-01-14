@@ -91,3 +91,7 @@ export const upgradePlan = (username, plan, data) => {
         headers: { "content-type": "multipart/form-data"}
     });
 }
+
+export const logOutGoogle = () => {
+    return axios.get(`${backendUrl}/api/v1/events/logout`, {withCredentials: true});
+}
