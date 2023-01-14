@@ -4,16 +4,17 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 
-export default function Comment({ data, name, img, idUser, setShowEditComment, putLike}) {
+
+export default function Comment({ data, idUser, setShowEditComment, putLike}) {
   return (
     <>
       <div className={styles.comment}>
         <div className={styles.pfpContainer}>
-          <img src={img} className={styles.commentPfp} />
+          <img src={data.hasOwnProperty('avatar') ? data.avatar  :"https://ionicframework.com/docs/img/demos/avatar.svg"} className={styles.commentPfp} />
         </div>
         <div>
           <div className={styles.commentLine}>
-            <p className={styles.commentName}>{name}</p>
+            <p className={styles.commentName}>{data.hasOwnProperty('fullName') ? data.fullName  :"SinNombre"}</p>
 
             {idUser === data.idUser ? (
               <div className={styles.commentLine}>

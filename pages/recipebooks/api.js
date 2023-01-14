@@ -29,11 +29,11 @@ export function addRecipeBook(name, summary, username) {
     });
 };
 
-export function editRecipeBook(name, summary, data) {
+export function editRecipeBook(data) {
   return axios
     .put(`${backendUrl}/api/v1/recipesBooks/${data._id}`, {
-      name: name,
-      summary: summary,
+      name: data.name,
+      summary: data.summary,
       recipeList: data.recipeList,
       idUser: data.idUser,
     })
@@ -44,6 +44,7 @@ export function editRecipeBook(name, summary, data) {
       console.log(error);
     });
 };
+
 
 export function deleteRecipeBook(recipeBookId){
     console.log("borro aqui "+`${backendUrl}/api/v1/recipesBooks/`+recipeBookId)

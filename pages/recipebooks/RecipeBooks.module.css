@@ -34,3 +34,30 @@
     color: white!important;
     background-color: red!important;
 }
+
+.recipeImg{
+    width: 250px;
+    height: 180px;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.recipeBookOption{
+    color: white!important;
+    font-size: medium;
+}
+
+.recipeBookOptionContainer{
+    background-color: #c5c5c5!important;
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;
+    user-select: none;
+    margin: auto;
+    cursor: pointer;
+}
+
+.cancelAddToRBButton{
+    margin-top: 10px;
+}

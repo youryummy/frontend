@@ -14,6 +14,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function RecipeBookHeader({ data, setEdit}) {
   return (
     <>
+    <div style={{display: "flex", justifyContent: "center"}}>
       <Item
         style={{
           borderRadius: "20px",
@@ -32,6 +33,7 @@ export default function RecipeBookHeader({ data, setEdit}) {
 
         <p>{data.summary}</p>
       </Item>
+      </div>
     </>
   );
 }

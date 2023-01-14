@@ -7,11 +7,13 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import { fetchData, addRecipeBook } from "./api";
 import Link from "next/Link";
+import AddToRecipeBookModal from "./components/addToRecipeBookModal";
+import { useSelector } from "react-redux";
 
 export default function RecipeBooks() {
   const [recipebooks, setRecipebooks] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
-  const username = "Deyan"; //ESTO SE CAMBIA LUEGO
+  const username = useSelector((state) => state.token?.username);
 
   useEffect(() => {
     getCurrentRecipeBooks();
@@ -57,6 +59,9 @@ export default function RecipeBooks() {
         >
           <AddIcon fontSize="inherit" />
         </IconButton>
+
+        <AddToRecipeBookModal></AddToRecipeBookModal>
+        
 
         {recipebooks.length === 0 ? (
           ""

@@ -23,7 +23,7 @@ export default function CommentsList() {
   const [currentUserRating, setCurrentUserRating] = useState({});
   const [showEditComment, setShowEditComment] = useState(false);
   const [error, setError] = useState({ newComment: "" });
-  const idRecipe = "jfkdlfdsfdsjsakalks"; //TODO
+  const idRecipe = "nueva"; //TODO
   const username = "Deyan"; //TODO
 
   useEffect(() => {
@@ -171,12 +171,10 @@ export default function CommentsList() {
         {ratings.map((item, index) => (
           <Comment
             key={index}
-            name="TODO"
             data={item}
             putLike={checkLikeComment}
             idUser={username}
             setShowEditComment={setShowEditComment}
-            img="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
           >
             {" "}
           </Comment>
