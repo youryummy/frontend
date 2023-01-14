@@ -18,7 +18,7 @@ export default function UploadImage({data, setData, d}) {
             height: `${d * 0.3}px`,
             width: `${d * 0.3}px`,
             color: "white",
-            opacity: data.avatar?.url ? 0 : 1,
+            opacity: data.imageUrl ? 0 : 1,
             transition: "opacity 0.3s",
             
             "&:hover": {
@@ -26,7 +26,7 @@ export default function UploadImage({data, setData, d}) {
             }
         },
         avatar: {
-            filter: data.avatar?.url ? "brightness(1)" : "brightness(0.5)",
+            filter: data.url ? "brightness(1)" : "brightness(0.5)",
             width: `${d ?? 50}px`,
             height: `${d ?? 50}px`,
             transition: "filter 0.3s",

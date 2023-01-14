@@ -14,6 +14,7 @@ async function apiPut(endpoint, body) {
 }
 
 async function apiPost(endpoint, body) {
+    console.log(`${backendUrl}${endpoint}`)
     return await axios.post(`${backendUrl}${endpoint}`, body, {
         withCredentials: true,
     });
@@ -26,14 +27,17 @@ async function apiDelete(endpoint) {
 }
 
 
-export async function editRecipe(recipeId, timestamp, synced) {
-    const endpoint = "events";
-    const body = {
-        id: eventId,
-        timestamp: timestamp,
-        synced: synced,
-    };
-    return await apiPut(endpoint, body);
+export async function editRecipe(recipeId, data) {
+    const endpoint = `recipes/${recipeId}`;
+    console.log(endpoint)
+    console.log(data)
+    return await apiPut(endpoint, data);
+}
+
+export async function postRecipe(data) {
+    const endpoint = "recipes";
+    
+    return await apiPost(endpoint, data);
 }
 
 
@@ -51,4 +55,14 @@ export async function deleteRecipe(recipeId) {
 export async function getRecipe(recipeId) {
     const endpoint = `recipes/${recipeId}`;
     return await apiGet(endpoint);
+}
+
+export async function getRecommendations(username, plan) {
+    const endpoint = `recommendation/${username}/${plan}`;
+    return await apiGet(endpoint);
+}
+
+export async function getRecommendedRecipes(ids) {
+    const endpoint = `recipes/recommendation`;
+    return await apiPost(endpoint, ids);
 }
