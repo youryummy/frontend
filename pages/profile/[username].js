@@ -31,7 +31,7 @@ export default function Profile() {
     const [ loading, setLoading ] = useState(true);
     const [ loadingButton, setLoadingButton ] = useState(false);
     const [ edit, setEdit ] = useState(false);
-    const [error, setError] = useState({username: "", password: "", fullName: "", email: "", birthDate: "", cellPhone: ""});
+    const [error, setError] = useState({password: "", fullName: "", email: "", birthDate: "", cellPhone: ""});
 
     useEffect(() => { if (!edit) fetchData(`/api/v1/accounts/${username}`, setData, setLoading)}, [edit]);
 
@@ -92,10 +92,9 @@ export default function Profile() {
         <Paper className={styles.card} elevation={6} >
 
           <div className={styles.basicInfoForm}>
-            <UploadImage data={data} setData={setData} d={200}/>
+            <UploadImage data={data} setData={setData} d={150}/>
             <span style={{display: "flex", flexDirection: "column", gap: "30px", width: "100%"}}>
               <TextField value={data.fullName} onChange={(ev) => validateField(setData, setError, ev.target.value, "fullName")} error={error.fullName.length > 0 ? true : false} helperText={error.fullName} className={styles.formInput} size="small" label="Name" variant="outlined" />
-              <TextField value={data.username} onChange={(ev) => validateField(setData, setError, ev.target.value, "username")} error={error.username.length > 0 ? true : false} helperText={error.username} className={styles.formInput} size="small" label="Username" variant="outlined" />
               <TextField value={data.password} onChange={(ev) => validateField(setData, setError, ev.target.value, "password")} error={error.password.length > 0 ? true : false} helperText={error.password} className={styles.formInput} size="small" label="Password" variant="outlined" type="password" InputLabelProps={{ shrink: true}} placeholder={"New Password"}/>
             </span>
           </div>

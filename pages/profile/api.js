@@ -55,7 +55,7 @@ export const validateField = (setData, setError, data, field) => {
 
 export const modify = (username, data, setError, setEdit) => {
     let avatarFile;
-    if (data.username === "") return setError((prev) => ({...prev, username: "Cannot be empty"}));
+    data.username = username;
     if (data.fullName === "") return setError((prev) => ({...prev, fullName: "Cannot be empty"}));
     if (data.email === "") return setError((prev) => ({...prev, email: "Cannot be empty"}));
     if (data.birthDate === "") delete data.birthDate;
