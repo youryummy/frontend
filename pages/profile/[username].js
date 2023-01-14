@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { setState as setToken } from "../../store/token.js";
 import EditIcon from "@mui/icons-material/Edit";
 import EditOffIcon from "@mui/icons-material/EditOff";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -32,7 +33,8 @@ export default function Profile() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { username } = router.query;
-  const tokenUsername = useSelector((state) => state.token?.username);
+  const decodedToken = useSelector((state) => state.token);
+  const tokenUsername = decodedToken?.username;
   const isGoogleLogin = useSelector((state) => state.googleLogin.isLogged);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -150,13 +152,14 @@ export default function Profile() {
                     paymentProps={{
                       currentPlan: data.plan,
                       onSuccess: (newPlan) =>
-                        upgradePlan(username, newPlan, data).then(() =>
+                        upgradePlan(username, newPlan, data).then(() => {
+                          dispatch(setToken({...decodedToken, plan: newPlan}));
                           fetchData(
                             `/api/v1/accounts/${username}`,
                             setData,
                             setLoading
                           )
-                        ),
+                        }),
                       onError: (err) => {
                         alert("Error in the transaction.");
                         console.log(err);
@@ -166,7 +169,7 @@ export default function Profile() {
                   />
                 ) : null}
               </span>
-              {isGoogleLogin && data.plan !== "premium" ? (
+              {isGoogleLogin && data.plan !== "base" ? (
                 <Button
                   className={styles.signoutGoogleButton}
                   variant="contained"
@@ -254,7 +257,8 @@ export default function Profile() {
         }
       </div>
     );
-  /* EDIT MODE */ else
+  /* EDIT MODE */ 
+  else
     return (
       <div className={styles.profileComponent}>
         <Paper className={styles.card} elevation={6}>
