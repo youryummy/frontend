@@ -44,7 +44,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Planner() {
   const [groupedEvents, setGroupedEvents] = useState({});
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
   const [statusMessage, setStatusMessage] = useState();
   const [modalEditEvent, setModalEditEvent] = useState(false);
   const [modalDeleteEvent, setModalDeleteEvent] = useState(false);
@@ -78,6 +78,11 @@ export default function Planner() {
           return event[0].timestamp;
         });
         setGroupedEvents(sortedEvents);
+      }).catch((error) => {
+        if (error.response.status === 500) {
+          window.alert(error.response.data["message"]);
+          return;
+        }
       });
     };
   }, []);
@@ -127,6 +132,10 @@ export default function Planner() {
       .catch((error) => {
         if (error.response.status === 400) {
           setError({ date: error.response.data["message"] });
+          return;
+        }
+        else if (error.response.status === 500) {
+          window.alert(error.response.data["message"]);
           return;
         }
       });

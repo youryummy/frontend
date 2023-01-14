@@ -55,7 +55,7 @@ export const validateField = (setData, setError, data, field) => {
 
 export const modify = (username, data, setError, setEdit) => {
     let avatarFile;
-    if (data.username === "") return setError((prev) => ({...prev, username: "Cannot be empty"}));
+    data.username = username;
     if (data.fullName === "") return setError((prev) => ({...prev, fullName: "Cannot be empty"}));
     if (data.email === "") return setError((prev) => ({...prev, email: "Cannot be empty"}));
     if (data.birthDate === "") delete data.birthDate;
@@ -94,4 +94,15 @@ export const upgradePlan = (username, plan, data) => {
 
 export const logOutGoogle = () => {
     return axios.get(`${backendUrl}/api/v1/events/logout`, {withCredentials: true});
+}
+
+export const deleteAccount = (username) => {
+    axios.delete(`${backendUrl}/api/v1/accounts/${username}`, {withCredentials: true})
+    .then(() => {
+        window.location.href = "/";
+    })
+    .catch((err) => {
+        console.log(err);
+        alert("Account could not be deleted, please try again later.");
+    });
 }

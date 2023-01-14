@@ -13,9 +13,10 @@ import EditOffIcon from "@mui/icons-material/EditOff";
 import GoogleIcon from "@mui/icons-material/Google";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CancelIcon from "@mui/icons-material/Cancel";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CircularProgress from "@mui/material/CircularProgress";
 import SadFace from "@mui/icons-material/SentimentVeryDissatisfied";
-import { validateField, modify, upgradePlan, logOutGoogle } from "./api";
+import { validateField, modify, upgradePlan, logOutGoogle, deleteAccount } from "./api";
 import { setState as isUserGoogleLogin } from "../../store/googleLogin";
 
 import UploadImage from "../../components/UploadImage.js";
@@ -159,7 +160,7 @@ export default function Profile() {
                   />
                 ) : null}
               </span>
-              {isGoogleLogin && data.plan !== "base" ? (
+              {isGoogleLogin && data.plan !== "premium" ? (
                 <Button
                   className={styles.signoutGoogleButton}
                   variant="contained"
@@ -212,16 +213,17 @@ export default function Profile() {
               </Modal>
             </div>
           </div>
-          {username === tokenUsername ? (
-            <IconButton
-              onClick={() => setEdit(true)}
-              sx={{ position: "absolute", right: "15px", top: "15px" }}
-              aria-label="delete"
-              size="large"
-            >
+          { username === tokenUsername ?
+            <span style={{position: "absolute", right: "15px", top: "15px", display: "inline-flex"}}>
+            <IconButton onClick={() => {confirm("Are you sure you want to delete the account?") ? deleteAccount(username) : null}} aria-label="delete" size="large">
+              <DeleteIcon fontSize="inherit" color="error" />
+            </IconButton> 
+            <IconButton onClick={() => setEdit(true)}  aria-label="modify" size="large">
               <EditIcon fontSize="inherit" />
-            </IconButton>
-          ) : null}
+            </IconButton> 
+            </span>
+            : null
+          }
         </Paper>
         {
           //TODO Add recipe cards
@@ -233,54 +235,10 @@ export default function Profile() {
       <div className={styles.profileComponent}>
         <Paper className={styles.card} elevation={6}>
           <div className={styles.basicInfoForm}>
-            <UploadImage data={data} setData={setData} d={200} />
-            <span
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "30px",
-                width: "100%",
-              }}
-            >
-              <TextField
-                value={data.fullName}
-                onChange={(ev) =>
-                  validateField(setData, setError, ev.target.value, "fullName")
-                }
-                error={error.fullName.length > 0 ? true : false}
-                helperText={error.fullName}
-                className={styles.formInput}
-                size="small"
-                label="Name"
-                variant="outlined"
-              />
-              <TextField
-                value={data.username}
-                onChange={(ev) =>
-                  validateField(setData, setError, ev.target.value, "username")
-                }
-                error={error.username.length > 0 ? true : false}
-                helperText={error.username}
-                className={styles.formInput}
-                size="small"
-                label="Username"
-                variant="outlined"
-              />
-              <TextField
-                value={data.password}
-                onChange={(ev) =>
-                  validateField(setData, setError, ev.target.value, "password")
-                }
-                error={error.password.length > 0 ? true : false}
-                helperText={error.password}
-                className={styles.formInput}
-                size="small"
-                label="Password"
-                variant="outlined"
-                type="password"
-                InputLabelProps={{ shrink: true }}
-                placeholder={"New Password"}
-              />
+            <UploadImage data={data} setData={setData} d={150}/>
+            <span style={{display: "flex", flexDirection: "column", gap: "30px", width: "100%"}}>
+              <TextField value={data.fullName} onChange={(ev) => validateField(setData, setError, ev.target.value, "fullName")} error={error.fullName.length > 0 ? true : false} helperText={error.fullName} className={styles.formInput} size="small" label="Name" variant="outlined" />
+              <TextField value={data.password} onChange={(ev) => validateField(setData, setError, ev.target.value, "password")} error={error.password.length > 0 ? true : false} helperText={error.password} className={styles.formInput} size="small" label="Password" variant="outlined" type="password" InputLabelProps={{ shrink: true}} placeholder={"New Password"}/>
             </span>
           </div>
           <TextField
