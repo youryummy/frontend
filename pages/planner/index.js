@@ -19,6 +19,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 import styles from "./Planner.module.css";
 import { useMemo } from "react";
 import _ from "lodash";
@@ -292,9 +294,12 @@ export default function Planner() {
                     </Tooltip>
                   </div>
                   <h2>{event.recipe.name}</h2>
-                  <p>{event.recipe.description}</p>
-                  <p>{event.recipe.ingredients[0].name}</p>
-                  <p>{event.recipe.ingredients[1].name}</p>
+                  <Stack direction="row" style={{ width: "100%", alignItems: "center", display: "flex", flexDirection: "wrap"}}>
+                    {event.recipe.tags.map((tag, id) => (
+                      <Chip label={tag} key={id} style={{margin: "auto", marginBottom: "10px"}}/>
+                    ))}
+                  </Stack>
+                    <p>{event.recipe.description}</p>
                 </Item>
               </Grid>
             ))}
@@ -308,7 +313,7 @@ export default function Planner() {
             <div className={styles.modalHeader}>
               <div style={{ width: "100%" }}>
                 <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                <p>When do you want to cook this recipe?</p>
+                <p style={{color: "black"}}>When do you want to cook this recipe?</p>
                 <TextField
                   size="small"
                   label="Date"
@@ -323,7 +328,7 @@ export default function Planner() {
                   error={error.date.length > 0 ? true : false}
                   helperText={error.date}
                 />
-                <p>What time?</p>
+                <p style={{color: "black"}}>What time?</p>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Time</InputLabel>
                   <Select
@@ -363,7 +368,7 @@ export default function Planner() {
             <div className={styles.modalHeader}>
               <div style={{ width: "100%" }}>
                 <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                <p>Are you sure you want to delete this event?</p>
+                <p style={{color: "black"}}>Are you sure you want to delete this event?</p>
               </div>
             </div>
             <Button
