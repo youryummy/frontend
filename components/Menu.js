@@ -11,7 +11,7 @@ import { useTheme } from "@mui/material/styles";
 import { default as MenuMaterial } from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import React from "react";
-import Link from "next/Link";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function Menu() {
