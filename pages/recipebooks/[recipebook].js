@@ -5,9 +5,10 @@ import { useEffect, useState, useMemo } from "react";
 import styles from "./RecipeBooks.module.css";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
-import { fetchRecipeBook, editRecipeBook } from "./api";
+import { fetchRecipeBook, editRecipeBook, fetchRecipe } from "./api";
 import { useRouter } from "next/router";
 import Link from "next/Link";
+import { useSelector } from "react-redux";
 
 export default function RecipeBook() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function RecipeBook() {
   const [currentRecipeBook, setCurrentRecipeBook] = useState({});
   const [recipeList, setRecipeList] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
-  const username = "Deyan"; //ESTO SE CAMBIA LUEGO
+  const username = useSelector((state) => state.token?.username);
 
   useEffect(() => {
     getCurrentRecipeBook();
@@ -26,8 +27,24 @@ export default function RecipeBook() {
       fetchRecipeBook(idRecipeBook)
         .then((res) => {
           console.log(res.data);
-          setCurrentRecipeBook(res.data);
-          setRecipeList(res.data["recipeList"]);
+          let newRecipeList = [];
+          const prom = res.data["recipeList"].map((item, index) => {
+            return fetchRecipe(item)
+              .then((recipeRes) => {
+                newRecipeList.push(recipeRes.data);
+                console.log("RECETA:", recipeRes.data);
+              })
+              .catch((err) => {
+                console.log(err);
+                alert("Something went wrong, please try again later.");
+              });
+          });
+
+          Promise.all(prom).then(() => {
+            setRecipeList(newRecipeList);
+            setCurrentRecipeBook(res.data);
+          });
+          
         })
         .catch((err) => {
           if (err.response?.status === 404) {
@@ -55,31 +72,31 @@ export default function RecipeBook() {
 
   if (!showEdit)
     return (
-      <div style={{padding: "10px 30px"}}>
+      <div style={{ padding: "10px 30px" }}>
         <RecipeBookHeader
           data={currentRecipeBook}
           setEdit={setShowEdit}
         ></RecipeBookHeader>
-        
-       
 
-        <div className={styles.bookList} style={{justifyContent: "flex-start"}}>
-          
-        {recipeList.map((item, index) => (
-              <Link
-                key={index}
-                href={{
-                  pathname: "/recipebooks/[recipebook]",
-                  query: { idRecipeBook: item },
-                }}
-              >
-                <RecipeCard
-            img="https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2018/12/Shakshuka-19.jpg"
-            name="Receta"
-            summary="ñam que rico"
-          ></RecipeCard>
-              </Link>
-            ))}
+        <div
+          className={styles.bookList}
+          style={{ justifyContent: "flex-start" }}
+        >
+          {recipeList.map((item, index) => (
+            <Link
+            key={index}
+            href={{
+              pathname: `/recipes/${item._id}`
+            }}
+          >
+            <RecipeCard
+                img={item.imageUrl}
+                name={item.name}
+                summary={item.summary}
+                idRecipeBook={item._id}
+              ></RecipeCard>
+          </Link>
+          ))}
         </div>
       </div>
     );

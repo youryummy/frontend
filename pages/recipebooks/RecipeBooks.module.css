@@ -67,3 +67,15 @@
         justify-content: center;
     }
 }
+
+.recipeCardName{
+    font-size: 1.4em;
+}
+
+.recipeCardSummary{
+    overflow: hidden;
+white-space: nowrap; /* Don't forget this one */
+text-overflow: ellipsis;
+    padding-left: 10px;
+    padding-right: 10px;
+}
