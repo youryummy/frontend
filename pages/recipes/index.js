@@ -119,6 +119,7 @@ export default function Recipes() {
     const postThisRecipe = () => {
         recipeToPost.steps = stepsList
         recipeToPost.tags = tagsList 
+        recipeToPost.createdBy = tokenUsername
         recipeToPost.duration = parseInt(recipeToPost.duration)
         console.log(recipeToPost)
         postRecipe(recipeToPost)
