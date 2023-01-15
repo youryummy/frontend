@@ -57,15 +57,27 @@ export default function Recipes() {
     const [selectedEditRecipe, setSelectedEditRecipe] = useState("");
     const [recommendedIds, setRecommendedIds] = useState("");
 
-    const [error, setError] = useState({ date: "" });
+
+    const [error, setError] = useState({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
 
     const [stepsList, setStepsList] = useState([""]);
     const [tagsList, setTagsList] = useState([""]);
+    const [ingredientsList, setIngredientsList] = useState([""]);
 
     const handleStepsRemove = (index) => {
         const list = [...stepsList];
         list.splice(index, 1);
         setStepsList(list);
+    };
+
+    const handleIngredientsAdd = () => {
+        setStepsList([...ingredientsList, '']);
+    };
+
+    const handleIngredientsRemove = (index) => {
+        const list = [...ingredientsList];
+        list.splice(index, 1);
+        setIngredientsList(list);
     };
 
     const handleStepsAdd = () => {
@@ -96,6 +108,13 @@ export default function Recipes() {
         setStepsList(list);      
     }
 
+    const handleChangeIngredients = (index, evnt)=>{    
+        const { name, value } = evnt.target;
+        const list = [...ingredientsList];
+        list[index] = value;
+        setIngredientsList(list);      
+    }
+
     const tokenUsername = useSelector((state) => state.token?.username);
     const tokenPlan = useSelector((state) => state.token?.plan);
 
@@ -117,34 +136,41 @@ export default function Recipes() {
 
 
     const postThisRecipe = () => {
-        recipeToPost.steps = stepsList
-        recipeToPost.tags = tagsList 
-        recipeToPost.createdBy = tokenUsername
-        recipeToPost.duration = parseInt(recipeToPost.duration)
-        console.log(recipeToPost)
-        postRecipe(recipeToPost)
-            .then((response) => {
-                showOperationStatus(response.status);
-                getRecommendedRecipes();
-                
-            })
-            .catch((error) => {
-                if (error.response?.status === 400) {
-                    setError({ date: error.response.data["message"] });
-                    return;
-                }
-            });
+        if(recipeToPost!=""){
+            console.log(recipeToPost)
+            recipeToPost.steps = stepsList || ""
+            recipeToPost.tags = tagsList || ""
+            recipeToPost.ingredientsId = ingredientsList || ""
+            recipeToPost.createdBy = tokenUsername
+            recipeToPost.duration = parseInt(recipeToPost.duration)
+            console.log(recipeToPost)
+            postRecipe(recipeToPost)
+                .then((response) => {
+                    showOperationStatus(response.status);
+                    setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
+                    getRecommendedRecipes();
+                    
+                })
+                .catch((error) => {
+                    if (error.response?.status === 400) {
+                        setError({ date: error.response.data["message"] });
+                        return;
+                    }
+                });
+        }
         setModalPostRecipe(false);
         setTagsList([""]);
         setStepsList([""]);
-        setRecipeToPost("");
+        setRecipeToPost(""); 
     };
 
     const openPostModal = () => {
+        setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
         setModalPostRecipe(true);
     };
 
     const openDeleteModal = (recipeId) => {
+        setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
         setModalDeleteRecipe(true);
         setSelectedIdRecipe(recipeId);
     };
@@ -200,7 +226,7 @@ export default function Recipes() {
         }
         setField(setData, data, field);
     };
-
+    console.log(error)
     return (
         <>
         {(!loading) ? ("") : <div className={styles.recipeComponent} style={{ justifyContent: "center" }}><CircularProgress /></div>}
@@ -291,13 +317,16 @@ export default function Recipes() {
 
                                     <Divider textAlign="left">Recipe</Divider>
 
-                                    <TextField fullWidth label="Name" margin="normal" onChange={(e) =>
-                    validateField(setRecipeToPost,setError, e.target.value, "name")
+                                    <TextField fullWidth label="Name" margin="normal" error={error.name.length > 0 ? true : false}
+ helperText={error.name}
+            onChange={(e) => validateField(setRecipeToPost,setError, e.target.value, "name")
                   }/>
-                                    <TextField fullWidth label="Duration" margin="normal" onChange={(e) =>
+                                    <TextField fullWidth label="Duration" margin="normal" type={"number"} error={error.name.length > 0 ? true : false}
+ helperText={error.duration} onChange={(e) =>
                     validateField(setRecipeToPost,setError, e.target.value, "duration")
                   }/>
-                                    <TextField fullWidth label="Summary" margin="normal" onChange={(e) =>
+                                    <TextField fullWidth label="Summary" margin="normal" error={error.name.length > 0 ? true : false}
+ helperText={error.summary} onChange={(e) =>
                     validateField(setRecipeToPost,setError, e.target.value, "summary")
                   }/>
                                     &nbsp;
@@ -315,6 +344,29 @@ export default function Recipes() {
                                         )}
                                         {tagsList.length !== 1 && (
                                             <Fab size="small" color="primary" aria-label="add" onClick={() => handleTagsRemove(index)}>
+                                                <RemoveIcon />
+                                            </Fab>
+
+                                        )}
+                                    </div>
+                                ))}
+
+&nbsp;
+                            <Divider textAlign="left">Ingredients</Divider>
+                            {
+                                ingredientsList.map((ingredient, index) => (
+
+                                    <div key={index} className="services">
+                                        <TextField fullWidth label={"Ingredient "+(index+1)} margin="normal" onChange={(evnt)=>handleChangeIngredients(index, evnt)
+                  }/>
+                                        {ingredientsList.length - 1 === index && ingredientsList.length < 15 && (
+
+                                            <Fab sx={{margin:'0px 14px 0px 0px'}} size="small" color="primary" aria-label="add" onClick={handleIngredientsAdd}>
+                                                <AddIcon />
+                                            </Fab>
+                                        )}
+                                        {ingredientsList.length !== 1 && (
+                                            <Fab size="small" color="primary" aria-label="add" onClick={() => handleIngredientsRemove(index)}>
                                                 <RemoveIcon />
                                             </Fab>
 
@@ -344,6 +396,8 @@ export default function Recipes() {
                                     </div>
                                 ))}
 
+                                
+
                                 </FormControl>
                             </div>
                         </div>
@@ -356,7 +410,8 @@ export default function Recipes() {
                         </Button>
                         <Button
                             className={styles.cancelButton}
-                            onClick={() => setModalPostRecipe(false)}
+                            onClick={() => {setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
+                            ;setModalPostRecipe(false)}}
                         >
                             <CancelIcon className={styles.buttonIcon} /> Cancel
                         </Button>

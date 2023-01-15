@@ -220,6 +220,17 @@ export default function Recipe() {
                         ))}
                     </Paper>
 
+                    { /* Ingredients */}
+                    <Paper elevation={6} style={{ padding: "20px", display: "inline-flex", flexDirection: "column", gap: "30px", justifyContent: "center", borderRadius: "30px" }}>
+                        {data.ingredientsId?.map((ingredient, index, arr) => (
+                            <span key={index} style={{ width: "100%", display: "inline-flex", alignItems: "center", gap: "10px" }}>
+                                <TextField fullWidth label={"Ingredient " + (index + 1)} margin="normal" value={ingredient} onChange={(evnt) => { arr[index] = evnt.target.value; setData({ ...data, ingredientsId: arr }) }} />
+                                {data.ingredientsId?.length !== 1 && (<Fab size="medium" color="primary" aria-label="add" onClick={() => { arr.splice(index, 1); setData({ ...data, ingredientsId: arr }) }}><RemoveIcon /></Fab>)}
+                                {data.ingredientsId?.length - 1 === index && data.ingredientsId?.length < 15 && (<Fab sx={{ margin: '0px 14px 0px 0px' }} size="medium" color="primary" aria-label="add" onClick={() => { arr.push(""); setData({ ...data, ingredientsId: arr }) }}><AddIcon /></Fab>)}
+                            </span>
+                        ))}
+                    </Paper>
+
                     {/* Steps */}
                     <Paper elevation={6} style={{ padding: "20px", display: "inline-flex", flexDirection: "column", gap: "30px", justifyContent: "center", borderRadius: "30px" }}>
                         {data.steps?.map((step, index, arr) => (
