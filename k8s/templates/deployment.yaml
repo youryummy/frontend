@@ -30,6 +30,8 @@ spec:
             value: {{ (index .Values .Chart.Name).jwt_secret | default .Values.jwt_secret }}
           - name: JWT_ISSUER
             value: {{ (index .Values .Chart.Name).jwt_issuer | default .Values.jwt_issuer }}
+          - name: BACKEND_URL
+            value: {{ (index .Values .Chart.Name).backend_url | default .Values.backend_url }}
 
           image: {{ (index .Values .Chart.Name).image | default .Values.image }}
           imagePullPolicy: IfNotPresent

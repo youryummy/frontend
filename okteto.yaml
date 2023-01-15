@@ -11,4 +11,5 @@ deploy:
     --set frontend.client_id=${CLIENT_ID}
     --set frontend.client_secret=${CLIENT_SECRET}
     --set frontend.redirect_uri=${REDIRECT_URI}
+    --set frontend.backend_url=${BACKEND_URL}
     --set frontend.image=${OKTETO_BUILD_FRONTEND_IMAGE}
