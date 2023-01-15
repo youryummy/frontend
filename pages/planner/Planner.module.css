@@ -34,7 +34,7 @@
 
 .item {
   border-radius: 20px !important;
-  height: 350px;
+  height: 420px;
   overflow-y: auto;
 }
 
@@ -90,4 +90,33 @@
 
 .buttonIcon {
   margin: 5px;
+}
+
+.notFoundError {
+  height: 50px !important;
+  width: 50px !important;
+  margin: 10px;
+  color: grey;
+}
+
+.plannerComponent {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.imageUrl {
+  width: 60%;
+  height: 60%;
+  object-fit: cover;
+}
+
+.tagsList {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: wrap;
 }

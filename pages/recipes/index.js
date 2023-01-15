@@ -13,7 +13,7 @@ import {
     deleteRecipe,
     getRecommendations,
     postRecipe,
-} from "./api";
+} from "../../api/recipeApi";
 import { CardActionArea } from '@mui/material';
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";

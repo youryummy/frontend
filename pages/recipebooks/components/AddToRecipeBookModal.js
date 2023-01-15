@@ -11,8 +11,7 @@ import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { useSelector } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
-import { fetchData } from "../api";
-import { editRecipeBook } from "../api";
+import { fetchData, editRecipeBook } from "../../../api/recipebooksApi";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

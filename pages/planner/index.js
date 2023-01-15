@@ -33,6 +33,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Tooltip from "@mui/material/Tooltip";
 import Alert from "@mui/material/Alert";
+import SadFace from "@mui/icons-material/SentimentVeryDissatisfied";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -146,21 +147,11 @@ export default function Planner() {
   const openEditModal = (event) => {
     setModalEditEvent(true);
     setSelectedIdEvent(event.id);
-    setRecipeDate(
-      new Date(event.timestamp * 1000).toLocaleDateString("en-CA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-    );
+    setRecipeDate(new Date(event.timestamp * 1000).toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }));
     const hour = new Date(event.timestamp * 1000).getHours();
-    if (hour === 9) {
-      setRecipeHour("Breakfast");
-    } else if (hour === 14) {
-      setRecipeHour("Lunch");
-    } else if (hour === 21) {
-      setRecipeHour("Dinner");
-    }
+    if (hour === 9) {setRecipeHour("Breakfast")}
+    else if (hour === 14) {setRecipeHour("Lunch")}
+    else if (hour === 21) {setRecipeHour("Dinner")}
   };
 
   const openDeleteModal = (eventId) => {
@@ -178,50 +169,17 @@ export default function Planner() {
   };
 
   const showOperationStatus = (status) => {
-    const icon =
-      status === 200 || status === 204 ? (
-        <CheckIcon className={styles.icon} />
-      ) : (
-        <PriorityHighIcon className={styles.icon} />
-      );
-    const children =
-      status === 200 || status === 204
-        ? "Operation completed successfully"
-        : "Operation failed";
-    setStatusMessage(
-      <Alert
-        onClose={() => {
-          setStatusMessage();
-        }}
-        className={styles.alert}
-        icon={icon}
-        children={children}
-      />
-    );
+    const icon = status === 200 || status === 204 ? (<CheckIcon className={styles.icon} />
+      ) : (<PriorityHighIcon className={styles.icon} />);
+    const children = status === 200 || status === 204 ? "Operation completed successfully" : "Operation failed";
+      setStatusMessage(<Alert onClose={() => { setStatusMessage() }} className={styles.alert} icon={icon} children={children} />);
   };
 
   const validateField = (setError, data, field) => {
-    let today = new Date().toLocaleDateString("en-CA", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    if (data < today) {
-      setError((prev) => ({
-        ...prev,
-        [field]: "Date must be greater than today",
-      }));
-    } else if (isNaN(new Date(data).getTime())) {
-      setError((prev) => ({
-        ...prev,
-        [field]: "Invalid date format",
-      }));
-    } else {
-      setError((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
-    }
+    let today = new Date().toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", })
+    if (data < today) {setError((prev) => ({ ...prev, [field]: "Date must be greater than today", }))}
+    else if (isNaN(new Date(data).getTime())) {setError((prev) => ({ ...prev, [field]: "Invalid date format", }))}
+    else {setError((prev) => ({ ...prev, [field]: "", }))}
     setRecipeDate(data);
   };
 
@@ -234,101 +192,56 @@ export default function Planner() {
     <>
       {!isLogged && tokenPlan !== "base" ? (
         <div className={styles.container}>
-          <Tooltip
-            title="Login with Google to sync your events with your calendar"
-            arrow
-            placement="top"
-          >
-            <Button
-              onClick={getOauth2Code}
-              className={styles.button}
-              variant="contained"
-              disabled={isLogged}
-            >
-              Login with Google
-              <GoogleIcon className={styles.googleIcon} />
-            </Button>
+          <Tooltip title="Login with Google to sync your events with your calendar" arrow placement="top">
+            <Button onClick={getOauth2Code} className={styles.button} variant="contained" disabled={isLogged}>Login with Google<GoogleIcon className={styles.googleIcon}/></Button>
           </Tooltip>
         </div>
-      ) : (
-        ""
-      )}
+      ) : ("")}
+
+      {groupedEvents && groupedEvents.length === 0 ?
+        <div className={styles.plannerComponent} style={{ justifyContent: "center" }}>
+          <SadFace className={styles.notFoundError} /> <b style={{ color: "grey" }}>No incoming events found </b>
+        </div> : ""}
+
       {Object.keys(groupedEvents).map((date, id) => (
         <Grid item xs={12} padding={"20px"} key={id}>
-          <h1 style={{ color: "black" }}>
-            {new Date(groupedEvents[date][0].timestamp * 1000).toDateString()}
-          </h1>
-          <Grid
-            container
-            spacing={{ xs: 1, md: 3 }}
-            columns={{ xs: 4, sm: 8, md: 12 }}
-          >
+          <h1 style={{ color: "black" }}>{new Date(groupedEvents[date][0].timestamp * 1000).toDateString()}</h1>
+          <Grid container spacing={{ xs: 1, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
             {groupedEvents[date].map((event, id) => (
               <Grid item xs={12} sm={4} md={4} key={id}>
                 <Item className={styles.item}>
+                  
                   <div className={styles.card}>
                     {!event.synced && isLogged ? (
-                      <Tooltip
-                        title="Syncronize this event with Google Calendar"
-                        arrow
-                        placement="top"
-                      >
-                        <Button
-                          onClick={() => syncEvent(event)}
-                          className={styles.actionButton}
-                        >
-                          <CachedIcon />
-                        </Button>
+                      <Tooltip title="Syncronize this event with Google Calendar" arrow placement="top">
+                        <Button onClick={() => syncEvent(event)} className={styles.actionButton}><CachedIcon /></Button>
                       </Tooltip>
-                    ) : (
-                      ""
-                    )}
+                    ) : ("")}
                     {!event.synced ? (
                       <Tooltip title="Edit this event" arrow placement="top">
-                        <Button
-                          onClick={() => openEditModal(event)}
-                          className={styles.actionButton}
-                        >
-                          <EditIcon />
-                        </Button>
+                        <Button onClick={() => openEditModal(event)} className={styles.actionButton}><EditIcon /></Button>
                       </Tooltip>
-                    ) : (
-                      ""
-                    )}
+                    ) : ("")}
                     <Tooltip title="Delete this event" arrow placement="top">
-                      <Button
-                        onClick={() => openDeleteModal(event.id)}
-                        className={styles.actionButton}
-                      >
-                        <DeleteIcon />
-                      </Button>
+                      <Button onClick={() => openDeleteModal(event.id)} className={styles.actionButton}><DeleteIcon /></Button>
                     </Tooltip>
                   </div>
+                  <img src={event.recipe.imageUrl} alt="recipe" className={styles.imageUrl} />
                   <h2>{event.recipe.name}</h2>
-                  <Stack
-                    direction="row"
-                    style={{
-                      width: "100%",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "wrap",
-                    }}
-                  >
-                    {event.recipe.tags.map((tag, id) => (
-                      <Chip
-                        label={tag}
-                        key={id}
-                        style={{ margin: "auto", marginBottom: "10px" }}
-                      />
-                    ))}
+                  <Stack direction="row" className={styles.tagsList} >
+                    {event.recipe.tags.map((tag, id) => {
+                      if (tag !== "") {
+                        return <Chip label={tag} key={id} style={{ margin: "auto", marginBottom: "10px" }}/>
+                      }
+                    })}
                   </Stack>
-                  <p>{event.recipe.description}</p>
                 </Item>
               </Grid>
             ))}
           </Grid>
         </Grid>
-      ))}
+      ))
+      }
       {statusMessage}
       <Modal open={modalEditEvent} onClose={() => setModalEditEvent(false)}>
         <Box bgcolor={"white"} className={styles.modal}>
@@ -336,9 +249,7 @@ export default function Planner() {
             <div className={styles.modalHeader}>
               <div style={{ width: "100%" }}>
                 <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                <p style={{ color: "black" }}>
-                  When do you want to cook this recipe?
-                </p>
+                <p style={{ color: "black" }}> When do you want to cook this recipe?</p>
                 <TextField
                   size="small"
                   label="Date"
@@ -356,13 +267,7 @@ export default function Planner() {
                 <p style={{ color: "black" }}>What time?</p>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Time</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    label="Time"
-                    value={recipeHour}
-                    onChange={(e) => setRecipeHour(e.target.value)}
-                  >
+                  <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Time" value={recipeHour} onChange={(e) => setRecipeHour(e.target.value)}>
                     <MenuItem value={"Breakfast"}>Breakfast</MenuItem>
                     <MenuItem value={"Lunch"}>Lunch</MenuItem>
                     <MenuItem value={"Dinner"}>Dinner</MenuItem>
@@ -370,18 +275,10 @@ export default function Planner() {
                 </FormControl>
               </div>
             </div>
-            <Button
-              className={styles.confirmButton}
-              disabled={error.date.length > 0 ? true : false}
-              onClick={() => editCurrentEvent()}
-            >
-              <EditIcon className={styles.buttonIcon} />
-              Edit
+            <Button className={styles.confirmButton} disabled={error.date.length > 0 ? true : false} onClick={() => editCurrentEvent()}>
+              <EditIcon className={styles.buttonIcon} /> Edit
             </Button>
-            <Button
-              className={styles.cancelButton}
-              onClick={() => cancelActionButton()}
-            >
+            <Button className={styles.cancelButton} onClick={() => cancelActionButton()}>
               <CancelIcon className={styles.buttonIcon} /> Cancel
             </Button>
           </div>
@@ -393,21 +290,13 @@ export default function Planner() {
             <div className={styles.modalHeader}>
               <div style={{ width: "100%" }}>
                 <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                <p style={{ color: "black" }}>
-                  Are you sure you want to delete this event?
-                </p>
+                <p style={{ color: "black" }}>Are you sure you want to delete this event?</p>
               </div>
             </div>
-            <Button
-              className={styles.confirmButton}
-              onClick={() => deleteCurrentEvent()}
-            >
+            <Button className={styles.confirmButton} onClick={() => deleteCurrentEvent()}>
               <DeleteIcon className={styles.buttonIcon} /> Delete
             </Button>
-            <Button
-              className={styles.cancelButton}
-              onClick={() => setModalDeleteEvent(false)}
-            >
+            <Button className={styles.cancelButton} onClick={() => setModalDeleteEvent(false)}>
               <CancelIcon className={styles.buttonIcon} /> Cancel
             </Button>
           </div>

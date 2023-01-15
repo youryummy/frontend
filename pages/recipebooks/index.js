@@ -4,8 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import styles from "./RecipeBooks.module.css";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
-import { fetchData, addRecipeBook } from "./api";
-import Link from "next/Link";
+import { fetchData, addRecipeBook } from "../../api/recipebooksApi";
+import Link from "next/link";
 import { useSelector } from "react-redux";
 
 export default function RecipeBooks() {

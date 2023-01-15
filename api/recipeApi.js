@@ -22,7 +22,7 @@ export function fetchData(path) {
 }
 
 export function addToPlanner(recipeId, date) {
-    return axios.post(`${backendUrl}events`, {id: recipeId, timestamp: Math.floor(new Date(date).getTime() / 1000)}, {withCredentials: true});
+    return axios.post(`${backendUrl}events`, {id: recipeId, timestamp: date}, {withCredentials: true});
 }
 
 export const validateField = (setData, setError, data, field) => {
