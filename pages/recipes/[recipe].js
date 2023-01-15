@@ -112,7 +112,7 @@ export default function Recipe() {
                         </span>
                         { /* Edit Button */}
                         {
-                        recipe.createdBy!=username ?
+                        recipe.createdBy===username ?
                             <IconButton onClick={() => setEdit(true)} style={{ position: "absolute", top: "10px", right: "10px" }} size="large"><ModeEditOutlineOutlinedIcon fontSize="large" /></IconButton>
                             : null
                         }
