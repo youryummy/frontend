@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useRouter } from 'next/router';
+import { CircularProgress } from '@material-ui/core';
 import Grid from "@mui/material/Grid";
 import TextField from '@mui/material/TextField';
 import Divider from '@mui/material/Divider';
@@ -50,6 +51,7 @@ export default function Recipes() {
     const [modalDeleteRecipe, setModalDeleteRecipe] = useState(false);
     const [modalPostRecipe, setModalPostRecipe] = useState(false);
     const [selectedIdRecipe, setSelectedIdRecipe] = useState("");
+    const [loading, setLoading] = useState(true);
     const [selectedRecipe, setSelectedRecipe] = useState("");
     const [recipeToPost, setRecipeToPost] = useState("");
     const [selectedEditRecipe, setSelectedEditRecipe] = useState("");
@@ -108,12 +110,8 @@ export default function Recipes() {
 
     const getRecommendedRecipes = useMemo(() => {
         return () => {           
-                getRecommendations(tokenUsername,tokenPlan).then((response) => {
-                    setRecommendedIds(response.data)
-                    getRecipes().then((res) => {
-                       setRecommendedRecipes(Array.from(res.data)
-                       .filter(student => response.data.includes(student._id)))});
-                });
+            getRecipes(tokenUsername,tokenPlan,setLoading).then((res) => {
+                setRecommendedRecipes(Array.from(res.data))});
         };
     }, []);
 
@@ -204,6 +202,7 @@ export default function Recipes() {
 
     return (
         <>
+        {(!loading) ? ("") : <div className={styles.recipeComponent} style={{ justifyContent: "center" }}><CircularProgress /></div>}
         <Tooltip title="Add a Recipe" arrow placement="top">
         <IconButton
           onClick={() => openPostModal()}
