@@ -86,12 +86,14 @@ export default function AddToRecipeBookModal(props) {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Choose a recipe book
           </Typography>
+          <div className={styles.recipeBookOptions}>
           {recipebooks.map((item, index) => (
-            <div className={styles.recipeBookOptionContainer} onClick={() => checkAddToRecipeBook(item)}>
+            <div key={index} className={styles.recipeBookOptionContainer} onClick={() => checkAddToRecipeBook(item)}>
                 <p className={styles.recipeBookOption}>{item.name}</p>
     
            
             </div> ))}
+            </div>
             <div className={styles.cancelAddToRBButton}>
           <Button onClick={handleClose} className={styles.cancelButton} variant="contained">Cancel</Button>
           </div>

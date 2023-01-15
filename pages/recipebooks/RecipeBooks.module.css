@@ -79,3 +79,8 @@ text-overflow: ellipsis;
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.recipeBookOptions{
+    height: 200px;
+    overflow: scroll;
+}
