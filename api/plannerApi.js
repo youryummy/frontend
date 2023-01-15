@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost:8080/api/v1/";
-// const backendUrl = "youryummy-gateway-youryummy-maribelrb22.cloud.okteto.net/api/v1/");
+const backendUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080"}/api/v1/`;
 
 async function apiGet(endpoint) {
   return await axios.get(`${backendUrl}${endpoint}`, { withCredentials: true });

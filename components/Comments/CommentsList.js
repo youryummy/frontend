@@ -16,15 +16,14 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function CommentsList() {
+export default function CommentsList(props) {
+  const { idRecipe, username } = props;
   const [ratings, setRatings] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [like, setLike] = useState(false);
   const [currentUserRating, setCurrentUserRating] = useState({});
   const [showEditComment, setShowEditComment] = useState(false);
   const [error, setError] = useState({ newComment: "" });
-  const idRecipe = "nueva"; //TODO
-  const username = "Deyan"; //TODO
 
   useEffect(() => {
     getCurrentRatings();
@@ -90,11 +89,13 @@ export default function CommentsList() {
   return (
     <>
       <Item
+        elevation={6}
         style={{
-          borderRadius: "20px",
+          borderRadius: "30px",
           height: "auto",
           padding: "20px",
           margin: "20px",
+          width: "100%"
         }}
       >
         <h1>Comments</h1>

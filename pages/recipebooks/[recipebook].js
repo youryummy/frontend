@@ -11,7 +11,7 @@ import Link from "next/Link";
 
 export default function RecipeBook() {
   const router = useRouter();
-  const { idRecipeBook } = router.query;
+  const { recipebook: idRecipeBook } = router.query;
   const [currentRecipeBook, setCurrentRecipeBook] = useState({});
   const [recipeList, setRecipeList] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
@@ -55,7 +55,7 @@ export default function RecipeBook() {
 
   if (!showEdit)
     return (
-      <div>
+      <div style={{padding: "10px 30px"}}>
         <RecipeBookHeader
           data={currentRecipeBook}
           setEdit={setShowEdit}
@@ -63,7 +63,7 @@ export default function RecipeBook() {
         
        
 
-        <div className={styles.bookList}>
+        <div className={styles.bookList} style={{justifyContent: "flex-start"}}>
           
         {recipeList.map((item, index) => (
               <Link

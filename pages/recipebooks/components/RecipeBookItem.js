@@ -16,7 +16,7 @@ export default function RecipeBookItem({data}) {
 
   return (
     <>
-      <Item style={{ borderRadius: "20px", width: "300px", height: "auto", padding: "20px", margin: "20px", userSelect: "none", cursor: "pointer" }}>
+      <Item style={{ borderRadius: "20px", width: "300px", height: "auto", padding: "60px", margin: "20px", userSelect: "none", cursor: "pointer" }}>
         <h1>{data.name}</h1>
         <p>{data.summary}</p>
       </Item>

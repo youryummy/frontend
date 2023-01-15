@@ -1,5 +1,4 @@
 import RecipeBookItem from "./components/RecipeBookItem";
-import RecipeBookHeader from "./components/RecipeBookHeader";
 import RecipeBookEdit from "./components/RecipeBookEdit";
 import { useEffect, useState, useMemo } from "react";
 import styles from "./RecipeBooks.module.css";
@@ -7,7 +6,6 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import { fetchData, addRecipeBook } from "./api";
 import Link from "next/Link";
-import AddToRecipeBookModal from "./components/addToRecipeBookModal";
 import { useSelector } from "react-redux";
 
 export default function RecipeBooks() {
@@ -49,19 +47,15 @@ export default function RecipeBooks() {
 
   if (!showCreate)
     return (
-      <div>
+      <div style={{padding: "10px 30px"}}>
         <IconButton
           onClick={() => setShowCreate(true)}
           aria-label="delete"
           size="large"
           color="default"
-          style={{ margin: "25px" }}
         >
           <AddIcon fontSize="inherit" />
-        </IconButton>
-
-        <AddToRecipeBookModal></AddToRecipeBookModal>
-        
+        </IconButton>       
 
         {recipebooks.length === 0 ? (
           ""
@@ -71,8 +65,7 @@ export default function RecipeBooks() {
               <Link
                 key={index}
                 href={{
-                  pathname: "/recipebooks/[recipebook]",
-                  query: { idRecipeBook: item._id },
+                  pathname: `/recipebooks/${item._id}`
                 }}
               >
                 <RecipeBookItem data={item}></RecipeBookItem>

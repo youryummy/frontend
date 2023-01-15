@@ -1,7 +1,7 @@
 .bookList{
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-evenly;
 }
 
 .addIcon{
@@ -60,4 +60,10 @@
 
 .cancelAddToRBButton{
     margin-top: 10px;
+}
+
+@media screen and (max-width: 728px) {
+    .bookList{
+        justify-content: center;
+    }
 }
