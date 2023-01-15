@@ -14,6 +14,7 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import Comments from "../../components/Comments/CommentsList";
 import UploadImage from '../../components/UploadImage';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CancelIcon from "@mui/icons-material/Cancel";
 import Modal from "@mui/material/Modal";
@@ -111,7 +112,7 @@ export default function Recipe() {
                         </span>
                         { /* Edit Button */}
                         {
-                        username === data.createdBy ?
+                        recipe.createdBy!=username ?
                             <IconButton onClick={() => setEdit(true)} style={{ position: "absolute", top: "10px", right: "10px" }} size="large"><ModeEditOutlineOutlinedIcon fontSize="large" /></IconButton>
                             : null
                         }

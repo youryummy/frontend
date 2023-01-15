@@ -24,6 +24,7 @@ import styles from "./Recipes.module.css";
 import UploadImage from '../../components/UploadImage';
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -203,7 +204,18 @@ export default function Recipes() {
 
     return (
         <>
+        <Tooltip title="Add a Recipe" arrow placement="top">
+        <IconButton
+          onClick={() => openPostModal()}
+          aria-label="delete"
+          size="large"
+          color="default"
+        >
+          <AddIcon fontSize="inherit" />
+        </IconButton>
+        </Tooltip>
             <Grid container padding={"20px"} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+            
                 {Array.from(recommendedRecipes).map((recipe, index) => (
                     <Grid item xs={2} sm={4} md={4} key={index}>
                         <Item className={styles.item}>
@@ -218,17 +230,8 @@ export default function Recipes() {
                                 </CardActionArea>
 
                             </div>
-
-                            <Tooltip title="Add a Recipe" arrow placement="top">
-                      <Button
-                        onClick={() => openPostModal()}
-                        className={styles.actionButton}
-                      >
-                        <AddIcon />
-                      </Button>
-                    </Tooltip>
    
-                    {recipe.createdBy==tokenUsername ? ("") :
+                    {recipe.createdBy!=tokenUsername ? ("") :
                       <Tooltip title="Delete this recipe" arrow placement="top">
                       <Button
                         onClick={() => openDeleteModal(recipe._id)}

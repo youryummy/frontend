@@ -3,6 +3,7 @@ import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from 'next/router';
 import { setState as isGoogleLogin } from "../../store/googleLogin";
 import Button from "@mui/material/Button";
 import {
@@ -20,6 +21,8 @@ import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Chip from "@mui/material/Chip";
+import { CardActionArea } from '@mui/material';
+import CardMedia from '@mui/material/CardMedia';
 import Stack from "@mui/material/Stack";
 import styles from "./Planner.module.css";
 import { useMemo } from "react";
@@ -44,6 +47,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function Planner() {
+  const router = useRouter();
   const [groupedEvents, setGroupedEvents] = useState({});
   const [isLogged, setIsLogged] = useState(true);
   const [statusMessage, setStatusMessage] = useState();
@@ -187,6 +191,7 @@ export default function Planner() {
     setModalEditEvent(false);
     setError({ date: "" });
   };
+  console.log(groupedEvents)
 
   return (
     <>
@@ -226,7 +231,14 @@ export default function Planner() {
                       <Button onClick={() => openDeleteModal(event.id)} className={styles.actionButton}><DeleteIcon /></Button>
                     </Tooltip>
                   </div>
-                  <img src={event.recipe.imageUrl} alt="recipe" className={styles.imageUrl} />
+                  <CardActionArea onClick={() => router.push(`/recipes/${event.recipe.id}`)}>
+                                    <CardMedia
+                                        component="img"
+                                        alt=""
+                                        height="200"
+                                        image={event.recipe.imageUrl}
+                                    />
+                                </CardActionArea>
                   <h2>{event.recipe.name}</h2>
                   <Stack direction="row" className={styles.tagsList} >
                     {event.recipe.tags.map((tag, id) => {
