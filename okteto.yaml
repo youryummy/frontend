@@ -1,0 +1,13 @@
+build:
+  frontend:
+    context: .
+
+deploy:
+  - helm upgrade --install frontend k8s
+    --set global.jwt_secret=${JWT_SECRET}
+    --set global.jwt_issuer=${JWT_ISSUER}
+    --set global.namespaceOverride=${NAMESPACE}
+    --set frontend.scope=${SCOPE}
+    --set frontend.client_id=${CLIENT_ID}
+    --set frontend.client_secret=${CLIENT_SECRET}
+    --set frontend.redirect_uri=${REDIRECT_URI}

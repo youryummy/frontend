@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: youryummy-{{ .Chart.Name }}
+  name: youryummy-{{ .Chart.Name }}
+  namespace: {{ if .Values.global.namespaceOverride }}{{.Values.global.namespaceOverride}}{{ else }}youryummy{{ end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: youryummy-{{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: youryummy-{{ .Chart.Name }}
+    spec:
+      containers:
+        - env:
+          - name: PUBLIC_SCOPE
+            value: {{ (index .Values .Chart.Name).scope | default .Values.scope }}
+          - name: CLIENT_ID
+            value: {{ (index .Values .Chart.Name).client_id | default .Values.client_id }}
+          - name: CLIENT_SECRET
+            value: {{ (index .Values .Chart.Name).client_secret | default .Values.client_secret }}
+          - name: REDIRECT_URI
+            value: {{ (index .Values .Chart.Name).redirect_uri | default .Values.redirect_uri }}
+          - name: JWT_SECRET
+            value: {{ (index .Values .Chart.Name).jwt_secret | default .Values.jwt_secret }}
+          - name: JWT_ISSUER
+            value: {{ (index .Values .Chart.Name).jwt_issuer | default .Values.jwt_issuer }}
+
+          image: {{ (index .Values .Chart.Name).image | default .Values.image }}
+          imagePullPolicy: IfNotPresent
+          name: youryummy-{{ .Chart.Name }}
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              memory: 300Mi
+            limits:
+              memory: 400Mi
+      securityContext: {}
