@@ -1,0 +1,81 @@
+.bookList{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.addIcon{
+    margin-top: 20px;
+}
+
+
+.formInput {
+    width: 100%;
+}
+
+.saveButton {
+    color: white!important;
+    background-color: #772318!important;
+}
+
+.saveButtonContainer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.cancelButton{
+    color: white!important;
+    background-color: #c5c5c5!important;
+}
+.deleteButton{
+    color: white!important;
+    background-color: red!important;
+}
+
+.recipeImg{
+    width: 250px;
+    height: 180px;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.recipeBookOption{
+    color: white!important;
+    font-size: medium;
+}
+
+.recipeBookOptionContainer{
+    background-color: #c5c5c5!important;
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;
+    user-select: none;
+    margin: auto;
+    cursor: pointer;
+}
+
+.cancelAddToRBButton{
+    margin-top: 10px;
+}
+
+@media screen and (max-width: 728px) {
+    .bookList{
+        justify-content: center;
+    }
+}
+
+.recipeCardName{
+    font-size: 1.4em;
+}
+
+.recipeCardSummary{
+    overflow: hidden;
+white-space: nowrap; /* Don't forget this one */
+text-overflow: ellipsis;
+    padding-left: 10px;
+    padding-right: 10px;
+}

@@ -1,0 +1,93 @@
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+}
+
+.card {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.alert {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #772318 !important;
+  color: white !important;
+}
+
+.icon {
+  color: white;
+}
+
+.button {
+  background-color: #772318 !important;
+}
+
+.googleIcon {
+  margin-left: 5px;
+}
+
+.item {
+  border-radius: 20px !important;
+  height: 350px;
+  overflow-y: auto;
+}
+
+.actionButton {
+  color: #772318 !important;
+  min-width: 40px !important;
+}
+
+.modal {
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 24;
+  border-radius: 10px;
+}
+
+.modalHeader {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+}
+
+.logo {
+  width: 20%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.confirmButton {
+  color: white !important;
+  background-color: #772318 !important;
+  width: 100%;
+  margin-top: 30px !important;
+  margin-bottom: 15px !important;
+}
+
+.cancelButton {
+  color: white !important;
+  background-color: #c5c5c5 !important;
+  width: 100%;
+}
+
+.buttonIcon {
+  margin: 5px;
+}

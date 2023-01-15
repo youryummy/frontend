@@ -1,0 +1,86 @@
+.commentName{
+    font-weight: bold;
+}
+
+.commentLine {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.commentPfp {
+ 
+    border-radius: 50%;
+    width: 80px; 
+    height: 80px;
+    object-fit: cover;
+
+    margin-right: 10px;
+}
+
+.commentIcon {
+    font-size: small;
+    width: 15px!important;
+    height: 15px!important;
+    margin-left: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.comment {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.commentText {
+    text-align: left;
+    margin: 0;
+}
+
+.pfpContainer {
+    display: flex;
+    align-items: center;
+}
+
+.formInput {
+    width: 100%;
+}
+
+.postButton {
+    color: white!important;
+    background-color: #772318!important;
+}
+
+.postButtonContainer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.item{
+    border-radius: 50px;
+    height: auto;
+    margin: 30px;
+}
+
+.cancelButton{
+    color: white!important;
+    background-color: #c5c5c5!important;
+    margin-right: 10px;
+}
+
+.deleteButtons{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+
+.deleteButton{
+    color: white!important;
+    background-color: red!important;
+}
