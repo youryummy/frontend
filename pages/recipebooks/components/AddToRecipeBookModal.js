@@ -3,7 +3,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 import IconButton from "@mui/material/IconButton";
 import styles from "../RecipeBooks.module.css";
 import { experimentalStyled as styled } from "@mui/material/styles";
@@ -26,13 +27,14 @@ const Item = styled(Paper)(({ theme }) => ({
   width: 400,
 }));
 
-export default function AddToRecipeBookModal() {
+export default function AddToRecipeBookModal(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [recipebooks, setRecipebooks] = useState([]);
+  const [bookmarked, setBookmarked] = useState(false);
   const username = useSelector((state) => state.token?.username);
-  const currentRecipeId = "nuevoid"; //TODO pasar id de receta
+  const currentRecipeId = props.recipe;
 
   const checkAddToRecipeBook = async (
     chosenRecipeBook
@@ -46,6 +48,10 @@ export default function AddToRecipeBookModal() {
   useEffect(() => {
     getCurrentRecipeBooks();
   }, []);
+
+  useEffect(() => { // Checks if recipe is bookmarked
+    if (!open) recipebooks.some(rb => rb.recipeList.includes(currentRecipeId)) ? setBookmarked(true) : setBookmarked(false);
+  }, [recipebooks, open]);
 
   const getCurrentRecipeBooks = useMemo(() => {
     return () => {
@@ -66,8 +72,8 @@ export default function AddToRecipeBookModal() {
   
   return (
     <div style={{alignSelf: "center"}}>
-        <IconButton  onClick={handleOpen} aria-label="addToRecipeBook" size="small" color="default">
-            <BookmarkBorderIcon fontSize="inherit" />
+        <IconButton  onClick={handleOpen} aria-label="addToRecipeBook" size="large" color="default">
+            {bookmarked ? <BookmarkOutlinedIcon fontSize="large" sx={{color: "#772318"}}/> : <BookmarkBorderOutlinedIcon fontSize="large" sx={{color: "#772318"}}/> }
         </IconButton>
 
       <Modal

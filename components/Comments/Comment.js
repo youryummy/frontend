@@ -14,7 +14,7 @@ export default function Comment({ data, idUser, setShowEditComment, putLike}) {
         </div>
         <div>
           <div className={styles.commentLine}>
-            <p className={styles.commentName}>{data.hasOwnProperty('fullName') ? data.fullName  :"SinNombre"}</p>
+            <p className={styles.commentName}>{idUser ?? "NoName"}</p>
 
             {idUser === data.idUser ? (
               <div className={styles.commentLine}>

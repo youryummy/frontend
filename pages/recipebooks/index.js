@@ -1,5 +1,4 @@
 import RecipeBookItem from "./components/RecipeBookItem";
-import RecipeBookHeader from "./components/RecipeBookHeader";
 import RecipeBookEdit from "./components/RecipeBookEdit";
 import { useEffect, useState, useMemo } from "react";
 import styles from "./RecipeBooks.module.css";
@@ -7,7 +6,6 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import { fetchData, addRecipeBook } from "./api";
 import Link from "next/Link";
-import AddToRecipeBookModal from "./components/addToRecipeBookModal";
 import { useSelector } from "react-redux";
 
 export default function RecipeBooks() {
@@ -57,10 +55,7 @@ export default function RecipeBooks() {
           color="default"
         >
           <AddIcon fontSize="inherit" />
-        </IconButton>
-
-        <AddToRecipeBookModal></AddToRecipeBookModal>
-        
+        </IconButton>       
 
         {recipebooks.length === 0 ? (
           ""
