@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import HomeIcon from "@mui/icons-material/Home";
+import KitchenIcon from '@mui/icons-material/Kitchen';
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import PersonIcon from "@mui/icons-material/Person";
@@ -33,6 +34,12 @@ export default function Menu() {
       text: "Recipes",
       link: "/recipes",
       href: "/recipes",
+    },
+    {
+      icon: <KitchenIcon fontSize="small" sx={{ marginRight: "20px" }} />,
+      text: "Ingredients",
+      link: "/ingredients",
+      href: "/ingredients",
     },
     {
       icon: <CalendarMonthIcon fontSize="small" sx={{ marginRight: "20px" }} />,
