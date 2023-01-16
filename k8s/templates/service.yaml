@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: youryummy-{{ .Chart.Name }}
+  name: youryummy-{{ .Chart.Name }}
+  namespace: {{ if .Values.global.namespaceOverride }}{{.Values.global.namespaceOverride}}{{ else }}youryummy{{ end }}
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  {{- if eq .Values.global.node_env "development" }}
+  type: NodePort
+  {{- end }}
+  ports:
+    - name: youryummy-{{ .Chart.Name }}
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+      {{- if eq .Values.global.node_env "development" }}
+      nodePort: {{ (index .Values .Chart.Name).dev_node_port | default .Values.dev_node_port }}
+      {{- end }}
+  selector:
+    app: youryummy-{{ .Chart.Name }}

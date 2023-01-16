@@ -22,7 +22,7 @@ export function fetchData(path) {
 }
 
 export function addToPlanner(recipeId, date) {
-    return axios.post(`${backendUrl}events`, {id: recipeId, timestamp: Math.floor(new Date(date).getTime() / 1000)}, {withCredentials: true});
+    return axios.post(`${backendUrl}events`, {id: recipeId, timestamp: date}, {withCredentials: true});
 }
 
 export const validateField = (setData, setError, data, field) => {
@@ -85,10 +85,18 @@ export async function postRecipe(data) {
 }
 
 
-export async function getRecipes() {
+export async function getRecipes(username, plan, setLoading) {
     const endpoint = "recipes";
-    let response = await apiGet(endpoint);
-    return response;
+    if(username==undefined||plan==undefined){
+        let response = await apiGet(endpoint);
+        setLoading(false);
+        return response;
+    }else{
+        let response = await apiGet(endpoint+`?username=${username}&plan=${plan}`);
+        setLoading(false);
+        return response;
+    }
+
 }
 
 export async function deleteRecipe(recipeId) {

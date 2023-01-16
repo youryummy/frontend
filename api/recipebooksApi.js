@@ -58,10 +58,12 @@ export function deleteRecipeBook(recipeBookId){
       });
   };
 
+
 export function fetchRecipe(recipeId) {
   console.log("fetching recipe", `${backendUrl}/recipes/${recipeId}`);
     return axios.get(`${backendUrl}/api/v1/recipes/${recipeId}`, {withCredentials: true});
 }
+
 
 export const validateInput = (input, type, setState, setError) => {
   setState(input);

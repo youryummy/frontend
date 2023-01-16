@@ -10,18 +10,18 @@
 
 .headerRecipeCard {
     display: inline-flex;
-    border-radius: 30px!important;
+    border-radius: 30px !important;
     width: 100%;
 }
 
-.headerRecipeCard li::marker{
-    font-weight: bold!important;
-    text-align: center!important;
+.headerRecipeCard li::marker {
+    font-weight: bold !important;
+    text-align: center !important;
 }
 
 .recipeLabel:disabled {
-    color:#772318!important;
-    border-color: #772318!important;
+    color: #772318 !important;
+    border-color: #772318 !important;
     text-transform: capitalize;
 }
 
@@ -30,7 +30,7 @@
     width: 50px !important;
     margin: 10px;
     color: grey;
-  }
+}
 
 .container {
     width: 100%;
@@ -110,7 +110,6 @@
     width: 95%;
 }
 
-
 .modalHeader {
     display: flex;
     flex-direction: row;
@@ -148,4 +147,21 @@
 
 .buttonIcon {
     margin: 5px;
+}
+
+.calendarModal {
+    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 24;
+    border-radius: 10px;
+}
+
+.calendarModalHeader {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
 }

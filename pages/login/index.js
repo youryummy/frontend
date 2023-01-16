@@ -6,7 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { TextField, Button } from "@mui/material";
 import { validateInput, login } from "../../api/loginApi";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Login() {
   const router = useRouter();
@@ -14,6 +14,10 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState({ username: "", password: "" });
   const [loadingButton, setLoadingButton] = useState(false);
+
+  useEffect(() => {
+    setLoadingButton(false);
+  }, [error])
 
   return (
     <div className={styles.loginComponent}>
@@ -49,7 +53,7 @@ export default function Login() {
         <Button
           onClick={() => {
             setLoadingButton(true);
-            login(username, password, setError).finally(() =>
+            login(username, password, setError)?.finally(() =>
               setLoadingButton(false)
             );
           }}
