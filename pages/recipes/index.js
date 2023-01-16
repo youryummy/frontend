@@ -227,9 +227,10 @@ export default function Recipes() {
         setField(setData, data, field);
     };
     console.log(error)
-    return (
+
+    if (loading) return <div className={styles.recipeComponent} style={{ justifyContent: "center", alignItems: "center", height: "100vh" }}><CircularProgress /></div>;
+    else return (
         <>
-        {(!loading) ? ("") : <div className={styles.recipeComponent} style={{ justifyContent: "center" }}><CircularProgress /></div>}
         <Tooltip title="Add a Recipe" arrow placement="top">
         <IconButton
           onClick={() => openPostModal()}
