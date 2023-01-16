@@ -5,8 +5,7 @@ import styles from "./Comments.module.css";
 import Comment from "./Comment";
 import { TextField, Button } from "@mui/material";
 import { useEffect, useState, useMemo } from "react";
-import { validateInput, postRating } from "./api";
-import { fetchData, putEditComment, deleteRating, putLike } from "./api";
+import { fetchData, putEditComment, deleteRating, putLike, validateInput, postRating } from "../../api/ratingsApi";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

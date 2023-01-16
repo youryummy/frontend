@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import styles from "./RecipeBooks.module.css";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
-import { fetchRecipeBook, editRecipeBook, fetchRecipe } from "./api";
+import { fetchRecipeBook, editRecipeBook, fetchRecipe } from "../../api/recipebooksApi";
 import { useRouter } from "next/router";
 import Link from "next/Link";
 import { useSelector } from "react-redux";
