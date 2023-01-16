@@ -10,12 +10,12 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function RecipeCard({img, name, summary, idRecipe}) {
+export default function RecipeCard({img, name, summary, idRecipe, style}) {
 
   return (
     <>
-      <Item style={{ borderRadius: "20px", width: "250px", height: "auto", padding: "0px", paddingBottom:"20px", margin: "20px", userSelect: "none", cursor: "pointer" }}>
-        <img className={styles.recipeImg} src={img} alt="test" />
+      <Item style={{ borderRadius: "20px", width: "250px", height: "auto", padding: "0px", paddingBottom:"20px", margin: "20px", userSelect: "none", cursor: "pointer", ...style }}>
+        <img className={styles.recipeImg} src={img ?? "/small-logo.png"} alt={name} />
         <h1 className={styles.recipeCardName}>{name}</h1>
         <p className={styles.recipeCardSummary}>{summary}</p>
       </Item>

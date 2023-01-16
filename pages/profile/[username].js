@@ -1,4 +1,4 @@
-import { Typography, TextField, Button, IconButton } from "@mui/material";
+import { Typography, TextField, Button, IconButton, Link, Divider } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import styles from "./Profile.module.css";
 import Paper from "@mui/material/Paper";
@@ -16,6 +16,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CircularProgress from "@mui/material/CircularProgress";
 import SadFace from "@mui/icons-material/SentimentVeryDissatisfied";
+import RecipeCard from "../recipebooks/components/RecipeCard";
 import {
   validateField,
   modify,
@@ -24,6 +25,7 @@ import {
   deleteAccount,
   fetchData,
 } from "../../api/profileApi";
+import { deleteRecipe } from "../../api/recipeApi";
 import { setState as isUserGoogleLogin } from "../../store/googleLogin";
 
 import UploadImage from "../../components/UploadImage.js";
@@ -37,6 +39,7 @@ export default function Profile() {
   const tokenUsername = decodedToken?.username;
   const isGoogleLogin = useSelector((state) => state.googleLogin.isLogged);
   const [data, setData] = useState(null);
+  const [recipes, setRecipes] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingButton, setLoadingButton] = useState(false);
   const [openGoogleModal, setOpenGoogleModal] = useState(false);
@@ -51,37 +54,28 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    if (!edit) fetchData(`/api/v1/accounts/${username}`, setData, setLoading);
+    if (!edit) {
+      fetchData(`/api/v1/accounts/${username}`, setData, setLoading);
+      fetchData(`/api/v1/recipes`, (data) => setRecipes(data.filter(r => r.createdBy === username)), setLoading);
+    }
   }, [edit]);
 
-  if (loading)
-    return (
-      <div
-        className={styles.profileComponent}
-        style={{ justifyContent: "center" }}
-      >
-        <CircularProgress />
-      </div>
-    );
-  if (!data)
-    return (
-      <div
-        className={styles.profileComponent}
-        style={{ justifyContent: "center" }}
-      >
-        <SadFace className={styles.notFoundError} />
-        <b style={{ color: "grey" }}>No Data Found</b>
-      </div>
-    );
-
-  const logoutGoogle = () => {
-    dispatch(isUserGoogleLogin(false));
-    logOutGoogle().then((res) => {
-      if (res.status === 200) {
-        setOpenGoogleModal(false);
-      }
-    });
+  const logoutGoogle = (callback = () => {}) => {
+    if (!isGoogleLogin) callback();
+    else {
+      dispatch(isUserGoogleLogin(false));
+      logOutGoogle().then((res) => {
+        if (res.status === 200) {
+          setOpenGoogleModal(false);
+          callback();
+        }
+      });
+    }
   };
+
+  if (loading) return ( <div className={styles.profileComponent} style={{ justifyContent: "center" }}><CircularProgress/></div> );
+  if (!data) return (<div className={styles.profileComponent} style={{ justifyContent: "center" }}><SadFace className={styles.notFoundError}/><b style={{ color: "grey" }}>No Data Found</b></div>);
+
 
   /* VIEW MODE */
   if (!edit)
@@ -89,171 +83,84 @@ export default function Profile() {
       <div className={styles.profileComponent}>
         <Paper className={styles.card} elevation={6}>
           <div className={styles.infoWrapper}>
-            <Avatar
-              className={styles.avatar}
-              alt={data.fullName.toUpperCase()}
-              src={data.avatar ?? "/broken"}
-            />
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
-            >
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "flex-end",
-                  gap: "15px",
-                }}
-              >
-                <Typography
-                  sx={{ textTransform: "capitalize", fontWeight: "600" }}
-                  variant="h3"
-                >
-                  {data.fullName}
-                </Typography>
-                <Typography
-                  sx={{ textDecoration: "underline", color: "gray" }}
-                  variant="h6"
-                >
-                  @{data.username}
-                </Typography>
+            <Avatar className={styles.avatar} alt={data.fullName.toUpperCase()} src={data.avatar ?? "/broken"}/>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px"}}>
+              
+              { /* Basic info*/ }
+              <span style={{ display: "inline-flex", alignItems: "flex-end", gap: "15px" }}>
+                <Typography sx={{ textTransform: "capitalize", fontWeight: "600" }} variant="h3">{data.fullName}</Typography>
+                <Typography sx={{ textDecoration: "underline", color: "gray" }} variant="h6" >@{data.username}</Typography>
               </span>
-              <Typography className={styles.userInfo}>
-                Email: <i>{data.email}</i>
-              </Typography>
-              {data.cellPhone && username === tokenUsername ? (
-                <Typography className={styles.userInfo}>
-                  Phone: <i>{data.cellPhone}</i>
-                </Typography>
-              ) : null}
-              {data.birthDate && username === tokenUsername ? (
-                <Typography className={styles.userInfo}>
-                  Birth Date: <i>{data.birthDate}</i>
-                </Typography>
-              ) : null}
-              <span
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                }}
-              >
-                <Button
-                  className={styles.userPlan}
-                  variant="outlined"
-                  size="medium"
-                  disabled
-                >
-                  {data.plan} Plan
-                </Button>
-                {data.plan !== "premium" && username === tokenUsername ? (
-                  <Plans
-                    popover
-                    payment
+              <Typography className={styles.userInfo}>Email: <i>{data.email}</i></Typography>
+              {data.cellPhone && username === tokenUsername ? (<Typography className={styles.userInfo}>Phone: <i>{data.cellPhone}</i></Typography>) : null}
+              {data.birthDate && username === tokenUsername ? (<Typography className={styles.userInfo}>Birth Date: <i>{data.birthDate}</i></Typography>) : null}
+              
+              {/* Payment */}
+              <span style={{ display: "flex", flexDirection: "column", gap: "10px", }}>
+                <Button className={styles.userPlan} variant="outlined" size="medium" disabled >{data.plan}Plan</Button>
+                {data.plan !== "premium" && username === tokenUsername ? 
+                  <Plans popover payment
+                    popoverProps={{ buttonText: "Want more? Go premium!" }}
                     paymentProps={{
                       currentPlan: data.plan,
-                      onSuccess: (newPlan) =>
+                      onSuccess: (newPlan) => {
                         upgradePlan(username, newPlan, data).then(() => {
                           dispatch(setToken({...decodedToken, plan: newPlan}));
-                          fetchData(
-                            `/api/v1/accounts/${username}`,
-                            setData,
-                            setLoading
-                          )
-                        }),
+                          fetchData( `/api/v1/accounts/${username}`, setData, setLoading)
+                        })
+                      },
                       onError: (err) => {
                         alert("Error in the transaction.");
                         console.log(err);
-                      },
+                      }
                     }}
-                    popoverProps={{ buttonText: "Want more? Go premium!" }}
-                  />
-                ) : null}
+                  /> : null}
               </span>
-              {isGoogleLogin && data.plan !== "base" ? (
-                <Button
-                  className={styles.signoutGoogleButton}
-                  variant="contained"
-                  onClick={() => {
-                    setOpenGoogleModal(true);
-                  }}
-                >
-                  Google log out
-                  <GoogleIcon className={styles.googleIcon} />
-                </Button>
-              ) : null}
-              <Modal
-                open={openGoogleModal}
-                onClose={() => {
-                  setOpenGoogleModal(false);
-                }}
-              >
+
+              { /* Google modal */}
+              {isGoogleLogin && data.plan !== "base" ? <Button className={styles.signoutGoogleButton} variant="contained" onClick={() => { setOpenGoogleModal(true); }}> Google log out <GoogleIcon className={styles.googleIcon} /></Button> : null}
+              <Modal open={openGoogleModal} onClose={() => {setOpenGoogleModal(false);}}>
                 <Box bgcolor={"white"} className={styles.modal}>
                   <div>
                     <div className={styles.modalHeader}>
                       <div style={{ width: "100%" }}>
-                        <img
-                          src="/small-logo.png"
-                          alt="logo"
-                          className={styles.logo}
-                        />
-                        <h3 style={{ color: "black" }}>
-                          Are you sure you want to log out from Google?
-                        </h3>
-                        <p style={{ color: "black" }}>
-                          You will not be able to syncronize your events with
-                          Google Calendar
-                        </p>
+                        <img src="/small-logo.png" alt="logo" className={styles.logo} />
+                        <h3 style={{ color: "black" }}> Are you sure you want to log out from Google? </h3>
+                        <p style={{ color: "black" }}> You will not be able to syncronize your events with Google Calendar </p>
                       </div>
                     </div>
-                    <Button
-                      className={styles.confirmButton}
-                      onClick={() => logoutGoogle()}
-                    >
-                      <LogoutIcon className={styles.buttonIcon} /> Log out
-                    </Button>
-                    <Button
-                      className={styles.cancelButton}
-                      onClick={() => setOpenGoogleModal(false)}
-                    >
-                      <CancelIcon className={styles.buttonIcon} /> Cancel
-                    </Button>
+                    <Button className={styles.confirmButton} onClick={() => logoutGoogle()}> <LogoutIcon className={styles.buttonIcon} />Log out</Button>
+                    <Button className={styles.cancelButton} onClick={() => setOpenGoogleModal(false)}><CancelIcon className={styles.buttonIcon} />Cancel</Button>
                   </div>
                 </Box>
               </Modal>
             </div>
           </div>
-          {username === tokenUsername ? (
-            <span
-              style={{
-                position: "absolute",
-                right: "15px",
-                top: "15px",
-                display: "inline-flex",
-              }}
-            >
-              <IconButton
-                onClick={() => {
-                  confirm("Are you sure you want to delete the account?")
-                    ? deleteAccount(username)
-                    : null;
-                }}
-                aria-label="delete"
-                size="large"
-              >
-                <DeleteIcon fontSize="inherit" color="error" />
-              </IconButton>
-              <IconButton
-                onClick={() => setEdit(true)}
-                aria-label="modify"
-                size="large"
-              >
-                <EditIcon fontSize="inherit" />
-              </IconButton>
+          {/* Edit and delete buttons */}
+          {username === tokenUsername ? 
+            <span className={styles.EditDeleteButtons} style={{position: "absolute", right: "15px", top: "15px", display: "inline-flex"}}>
+              <IconButton onClick={() => { confirm("Are you sure you want to delete the account?") ? logoutGoogle(() => deleteAccount(username)) : null; }} aria-label="delete" size="large"><DeleteIcon fontSize="inherit" color="error"/></IconButton>
+              <IconButton onClick={() => setEdit(true)} aria-label="modify" size="large" ><EditIcon fontSize="inherit" /></IconButton>
             </span>
-          ) : null}
+            : null}
         </Paper>
-        {
-          //TODO Add recipe cards
+        
+        { /* User recipes */}
+        { recipes?.length > 0 ?
+          <div className={styles.recipeContainer} style={{ display: "flex", flexWrap: "wrap", width: "100%", marginTop: "20px", gap: "20px", justifyContent: recipes.length > 2 ? "space-evenly" : "flex-start" }}>
+            <Typography variant="h4" style={{ width: "100%", fontWeight: 600, color: "gray", margin: "10px 0px", textAlign: "center" }}>My Recipes<Divider style={{marginTop: "5px"}}/></Typography>
+            {recipes.map((item, index) => (
+              <span style={{position: "relative"}}>
+              <Link key={index} href={`/recipes/${item._id}`}>
+                <RecipeCard img={item.imageUrl} name={item.name} summary={item.summary} style={{margin: "0px"}}></RecipeCard>
+              </Link>
+              <IconButton style={{position: "absolute", top: "-10px", right: "-10px", backgroundColor: "#772318"}}>
+                <DeleteIcon fontSize="inherit" style={{color: "white"}} onClick={() => { confirm("Are you sure you want to delete the recipe?") ? deleteRecipe(item._id).then(() => setRecipes((prev) => prev.filter(r => r._id !== item._id))).catch(() => alert("Recipe could not be deleted. Try again later")) : null; }}/>
+              </IconButton>
+              </span>
+            ))}
+          </div>
+          : null
         }
       </div>
     );
