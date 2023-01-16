@@ -6,6 +6,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import KitchenIcon from '@mui/icons-material/Kitchen';
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import InfoIcon from "@mui/icons-material/Info";
 import PersonIcon from "@mui/icons-material/Person";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
@@ -58,6 +59,12 @@ export default function Menu() {
       text: "Profile",
       link: "/profile/[username]",
       href: `/profile/${token?.username}`,
+    },
+    {
+      icon: <InfoIcon fontSize="small" sx={{ marginRight: "20px" }} />,
+      text: "About",
+      link: "/about",
+      href: "/about",
     },
   ];
 
