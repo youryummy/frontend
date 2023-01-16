@@ -60,6 +60,10 @@ export default function Profile() {
     }
   }, [edit]);
 
+  useEffect(() => {
+    setLoadingButton(false);
+  }, [error])
+
   const logoutGoogle = (callback = () => {}) => {
     if (!isGoogleLogin) callback();
     else {
@@ -262,7 +266,7 @@ export default function Profile() {
             <Button
               onClick={() => {
                 setLoadingButton(true);
-                modify(username, data, setError, setEdit).finally(() =>
+                modify(username, data, setError, setEdit)?.finally(() =>
                   setLoadingButton(false)
                 );
               }}

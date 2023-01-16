@@ -7,7 +7,7 @@ import { TextField, Button } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import UploadImage from "../../components/UploadImage.js";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Login() {
   const router = useRouter();
@@ -29,6 +29,10 @@ export default function Login() {
     birthDate: "",
     cellPhone: "",
   });
+
+  useEffect(() => {
+    setLoadingButton(false);
+  }, [error])
 
   return (
     <div className={styles.registerComponent}>
@@ -173,7 +177,7 @@ export default function Login() {
           <Button
             onClick={() => {
               setLoadingButton(true);
-              register(data, setError).finally(() => setLoadingButton(false));
+              register(data, setError)?.finally(() => setLoadingButton(false));
             }}
             className={styles.saveButton}
             variant="contained"
