@@ -5,13 +5,13 @@ const backendUrl =
 
 export function fetchData(username) {
   return axios
-    .get(`${backendUrl}/api/v1/recipesBooks/findByUserId/${username}`)
+    .get(`${backendUrl}/api/v1/recipesBooks/findByUserId/${username}`, {withCredentials: true})
     
 }
 
 export function fetchRecipeBook(recipeBookId) {
 
-  return axios.get(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`);
+  return axios.get(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`, {withCredentials: true});
 }
 
 export function addRecipeBook(name, summary, username) {
@@ -20,7 +20,7 @@ export function addRecipeBook(name, summary, username) {
       summary: summary,
       recipeList: [],
       idUser: username,
-    })
+    }, {withCredentials: true},)
     .then(function (response) {
       console.log(response);
     })
@@ -36,7 +36,7 @@ export function editRecipeBook(data) {
       summary: data.summary,
       recipeList: data.recipeList,
       idUser: data.idUser,
-    })
+    }, {withCredentials: true})
     .then(function (response) {
       console.log(response);
     })
@@ -49,7 +49,7 @@ export function editRecipeBook(data) {
 export function deleteRecipeBook(recipeBookId){
     console.log("borro aqui "+`${backendUrl}/api/v1/recipesBooks/`+recipeBookId)
     return axios
-      .delete(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`)
+      .delete(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`, {withCredentials: true})
       .then(function (response) {
         console.log(response);
       })
@@ -57,6 +57,13 @@ export function deleteRecipeBook(recipeBookId){
         console.log(error);
       });
   };
+
+
+export function fetchRecipe(recipeId) {
+  console.log("fetching recipe", `${backendUrl}/recipes/${recipeId}`);
+    return axios.get(`${backendUrl}/api/v1/recipes/${recipeId}`, {withCredentials: true});
+}
+
 
 export const validateInput = (input, type, setState, setError) => {
   setState(input);

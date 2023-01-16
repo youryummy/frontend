@@ -86,7 +86,7 @@ export default function AddToRecipeBookModal(props) {
             Choose a recipe book
           </Typography>
           <div className={styles.recipeBookOptions}>
-          {recipebooks.map((item, index) => (
+          {recipebooks?.map((item, index) => (
             <div key={index} className={styles.recipeBookOptionContainer} onClick={() => checkAddToRecipeBook(item)}>
                 <p className={styles.recipeBookOption}>{item.name}</p>
     

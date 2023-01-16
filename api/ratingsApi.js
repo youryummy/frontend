@@ -8,7 +8,7 @@ export const validateInput = (input, type, setState, setError) => {
 };
 
 export function fetchData(idRecipe) {
-  return axios.get(`${backendUrl}/api/v1/ratings/findByRecipeId/${idRecipe}`);
+  return axios.get(`${backendUrl}/api/v1/ratings/findByRecipeId/${idRecipe}`, {withCredentials: true});
 }
 
 export function postRating(like, comment, username, idRecipe) {
@@ -17,7 +17,7 @@ export function postRating(like, comment, username, idRecipe) {
     idRecipe: idRecipe,
     like: like,
     comment: comment,
-  });
+  }, {withCredentials: true});
 }
 
 export function putLike(like, data) {
@@ -26,7 +26,7 @@ export function putLike(like, data) {
     comment: data.comment,
     idUser: data.idUser,
     idRecipe: data.idRecipe,
-  });
+  }, {withCredentials: true});
 }
 
 export function putEditComment(comment, data) {
@@ -35,12 +35,12 @@ export function putEditComment(comment, data) {
     comment: comment,
     idUser: data.idUser,
     idRecipe: data.idRecipe,
-  });
+  }, {withCredentials: true});
 }
 
 export function deleteRating(idRating) {
   return axios
-    .delete(`${backendUrl}/api/v1/ratings/${idRating}`)
+    .delete(`${backendUrl}/api/v1/ratings/${idRating}`, {withCredentials: true})
     .then(function (response) {
       console.log(response);
     });
