@@ -76,3 +76,7 @@ export function editRecipe(recipeId, data) {
         withCredentials: true,
     });
 }
+
+export function deleteRecipe(recipeId) {
+    return axios.delete(`${backendUrl}recipes/${recipeId}`, {withCredentials: true});
+}
