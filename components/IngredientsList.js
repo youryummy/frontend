@@ -18,7 +18,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import { Button, Dialog, DialogContent, DialogTitle, TextField } from '@material-ui/core';
 import { experimentalStyled as styled } from "@mui/material/styles";
-import { fetchIngredientsData, createIngredient, updateIngredient, deleteIngredient } from '../api/ingredientsApi';
+import { validateField, fetchIngredientsData, createIngredient, updateIngredient, deleteIngredient } from '../api/ingredientsApi';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -83,12 +83,6 @@ const headCells = [
     label: 'Image',
   },
   {
-    id: 'url',
-    numeric: false,
-    disablePadding: false,
-    label: 'URL',
-  },
-  {
     id: 'acciones',
     numeric: false,
     disablePadding: false,
@@ -139,7 +133,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIngredientBeingEdited}) {
+function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIngredientBeingEdited, error, setError}) {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit ingredient</DialogTitle>
@@ -149,26 +143,42 @@ function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIn
           fullWidth={true}
           label="Name"
           value={ingredient.nombre}
-          onChange={event => setIngredientBeingEdited({ ...ingredient, nombre: event.target.value })}
+          onChange={(ev) =>
+            validateField(setIngredientBeingEdited, setError, ev.target.value, "nombre")
+          }
+          error={error.nombre.length > 0 ? true : false}
+          helperText={error.nombre}
         />
         <TextField
           style={{ width: "45%", marginBottom: "10px"}}
           label="Created by"
           value={ingredient.creado_por}
-          onChange={event => setIngredientBeingEdited({ ...ingredient, creado_por: event.target.value })}
+          onChange={(ev) =>
+            validateField(setIngredientBeingEdited, setError, ev.target.value, "creado_por")
+          }
+          error={error.creado_por.length > 0 ? true : false}
+          helperText={error.creado_por}
         />
         <TextField
           style={{ width: "45%", marginBottom: "10px", float: "right" }}
           label="Brand"
           value={ingredient.marca}
-          onChange={event => setIngredientBeingEdited({ ...ingredient, marca: event.target.value })}
+          onChange={(ev) =>
+            validateField(setIngredientBeingEdited, setError, ev.target.value, "marca")
+          }
+          error={error.marca.length > 0 ? true : false}
+          helperText={error.marca}
         />
         <TextField
           style={{ width: "100%", marginBottom: "10px" }}
           fullWidth={true}
           label="URL"
           value={ingredient.url}
-          onChange={event => setIngredientBeingEdited({ ...ingredient, url: event.target.value })}
+          onChange={(ev) =>
+            validateField(setIngredientBeingEdited, setError, ev.target.value, "url")
+          }
+          error={error.url.length > 0 ? true : false}
+          helperText={error.url}
         />
       </DialogContent>
       <div style={{display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px"}}>
@@ -191,6 +201,12 @@ export default function EnhancedTable() {
   const [isIngredientBeingCreated, setIsIngredientBeingCreated] = useState(false);
   const [ingredientBeingEdited, setIngredientBeingEdited] = useState({});
   const [filterValue, setFilterValue] = useState("");
+  const [error, setError] = useState({
+    nombre: "",
+    creado_por: "",
+    marca: "",
+    url: ""
+  });
 
   useEffect(() => {
     fetchData(100, "");
@@ -217,17 +233,21 @@ export default function EnhancedTable() {
   }
 
   async function saveIngredient() {
-    
-    if (isIngredientBeingCreated) {
-      const response = await createIngredient(ingredientBeingEdited);
-      setIngredients([response.data, ...ingredients]);
-      setIsIngredientBeingCreated(false);
+
+    if (error.nombre.length > 0 || error.creado_por.length > 0 || error.marca.length > 0 || error.url.length > 0) {
+      return;
     } else {
-      await updateIngredient(ingredientBeingEdited);
-      setIngredients(ingredients.map(i => i._id === ingredientBeingEdited._id ? ingredientBeingEdited : i));
+      if (isIngredientBeingCreated) {
+        const response = await createIngredient(ingredientBeingEdited);
+        setIngredients([response.data, ...ingredients]);
+        setIsIngredientBeingCreated(false);
+      } else {
+        await updateIngredient(ingredientBeingEdited);
+        setIngredients(ingredients.map(i => i._id === ingredientBeingEdited._id ? ingredientBeingEdited : i));
+      }
+      setOpen(false);
+      setIngredientBeingEdited({});
     }
-    setOpen(false);
-    setIngredientBeingEdited({});
   }
 
   async function handleDeleteIngredient(id) {
@@ -300,7 +320,7 @@ export default function EnhancedTable() {
               onRequestSort={handleRequestSort}
               rowCount={ingredients.length}
             />
-            <EditIngredientDialog open={open} ingredient={ingredientBeingEdited} onClose={handleClose} saveIngredient={saveIngredient} setIngredientBeingEdited={setIngredientBeingEdited} />
+            <EditIngredientDialog open={open} ingredient={ingredientBeingEdited} onClose={handleClose} saveIngredient={saveIngredient} setIngredientBeingEdited={setIngredientBeingEdited} error={error} setError={setError} />
             <TableBody>
               {stableSort(ingredients, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -320,12 +340,11 @@ export default function EnhancedTable() {
                         scope="row"
                         padding="none"
                       >
-                        {ingredient.nombre}
+                        <a href={ingredient.url}>{ingredient.nombre}</a>
                       </TableCell>
                       <TableCell>{ingredient.creado_por}</TableCell>
                       <TableCell>{ingredient.marca}</TableCell>
                       <TableCell><img src={ingredient.imagen} alt={ingredient.imagen} style={{height: "150px", width: "150px", objectFit: 'scale-down'}}/></TableCell>
-                      <TableCell><a href={ingredient.url}>{ingredient.url}</a></TableCell>
                       <TableCell>
                         <IconButton onClick={handleEditClick.bind(null, ingredient)}>
                           <EditIcon/>

@@ -17,6 +17,11 @@ export const validateField = (setData, setError, data, field) => {
             if (data.length === 0) setError((prev) => ({...prev, [field]: "Cannot be empty"}));
             else setError((prev) => ({...prev, [field]: ""}));
             break;
+        case "url":
+            if (data.length === 0) setError((prev) => ({...prev, [field]: "Cannot be empty"}));
+            else if (!(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/).test(data.url)) setError((prev) => ({...prev, [field]: "Input a valid URL"}));
+            else setError((prev) => ({...prev, [field]: ""}));
+            break;
     }
     setData((prev) => ({...prev, [field]: data}));
 };
