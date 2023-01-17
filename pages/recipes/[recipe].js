@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { fetchData, fetchRecipes, addToPlanner, editRecipe, validateField } from "../../api/recipeApi";
-import { Paper, CardMedia, Typography, Button, IconButton, Popover, TextField, Divider, FormControl, Fab } from "@mui/material";
+import { fetchRecipes, addToPlanner, editRecipe } from "../../api/recipeApi";
+import { Paper, CardMedia, Typography, Button, IconButton, TextField, Divider, FormControl, Fab } from "@mui/material";
 import { useSelector } from "react-redux";
 import styles from "./Recipes.module.css";
 import SadFace from "@mui/icons-material/SentimentVeryDissatisfied";
@@ -32,8 +32,6 @@ export default function Recipe() {
     const [data, setData] = useState(null);
     const [error, setError] = useState({date: ""});
     const [loading, setLoading] = useState(true);
-    const [planned, setPlanned] = useState(false);
-    const [anchorEl, setAnchorEl] = useState(null);
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
     const [recipeDate, setRecipeDate] = useState("");
     const [recipeHour, setRecipeHour] = useState("");

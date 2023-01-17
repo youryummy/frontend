@@ -1,425 +1,100 @@
-import * as React from 'react';
-import { useRouter } from 'next/router';
-import { CircularProgress } from '@material-ui/core';
-import Grid from "@mui/material/Grid";
-import TextField from '@mui/material/TextField';
-import Divider from '@mui/material/Divider';
-import Fab from '@mui/material/Fab';
-import { experimentalStyled as styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
-import { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
-import {
-    getRecipes,
-    deleteRecipe,
-    getRecommendations,
-    postRecipe,
-} from "../../api/recipeApi";
-import { CardActionArea } from '@mui/material';
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import FormControl from "@mui/material/FormControl";
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import styles from "./Recipes.module.css";
-import UploadImage from '../../components/UploadImage';
-import { useMemo } from "react";
+import { CircularProgress, Button, Link, Modal, Paper, Typography, Divider, TextField, Autocomplete, Checkbox, IconButton } from "@mui/material";
 import { useSelector } from "react-redux";
-import IconButton from "@mui/material/IconButton";
-import CheckIcon from "@mui/icons-material/Check";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CancelIcon from "@mui/icons-material/Cancel";
-import RemoveIcon from '@mui/icons-material/Remove';
+import { fetchData, fetchRecommendedRecipes, postRecipe, validateField } from "../../api/recipeApi";
+import { useState, useEffect } from "react";
+import styles from "./Recipes.module.css";
+import SadFace from "@mui/icons-material/SentimentVeryDissatisfied";
+import RecipeCard from "../recipebooks/components/RecipeCard";
+import UploadImage from "../../components/UploadImage";
 import AddIcon from '@mui/icons-material/Add';
-import Tooltip from "@mui/material/Tooltip";
-import Alert from "@mui/material/Alert";
 
-
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-}));
 export default function Recipes() {
-    const router = useRouter();
-    const [recommendedRecipes, setRecommendedRecipes] = useState({});
-
-    const [statusMessage, setStatusMessage] = useState();
-    const [modalDeleteRecipe, setModalDeleteRecipe] = useState(false);
-    const [modalPostRecipe, setModalPostRecipe] = useState(false);
-    const [selectedIdRecipe, setSelectedIdRecipe] = useState("");
+    const {username, plan} = useSelector((state) => state.token);
     const [loading, setLoading] = useState(true);
-    const [selectedRecipe, setSelectedRecipe] = useState("");
-    const [recipeToPost, setRecipeToPost] = useState("");
-    const [selectedEditRecipe, setSelectedEditRecipe] = useState("");
-    const [recommendedIds, setRecommendedIds] = useState("");
-
-
-    const [error, setError] = useState({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
-
-    const [stepsList, setStepsList] = useState([""]);
-    const [tagsList, setTagsList] = useState([""]);
-    const [ingredientsList, setIngredientsList] = useState([""]);
-
-    const handleStepsRemove = (index) => {
-        const list = [...stepsList];
-        list.splice(index, 1);
-        setStepsList(list);
-    };
-
-    const handleIngredientsAdd = () => {
-        setStepsList([...ingredientsList, '']);
-    };
-
-    const handleIngredientsRemove = (index) => {
-        const list = [...ingredientsList];
-        list.splice(index, 1);
-        setIngredientsList(list);
-    };
-
-    const handleStepsAdd = () => {
-        setStepsList([...stepsList, '']);
-    };
-
-    const handleTagsRemove = (index) => {
-        const list = [...tagsList];
-        list.splice(index, 1);
-        setTagsList(list);
-    };
-
-    const handleTagsAdd = () => {
-        setTagsList([...tagsList, '']);
-    };
-
-    const handleChangeTags = (index, evnt)=>{    
-        const { name, value } = evnt.target;
-        const list = [...tagsList];
-        list[index] = value;
-        setTagsList(list);      
-    }
-
-    const handleChangeSteps = (index, evnt)=>{    
-        const { name, value } = evnt.target;
-        const list = [...stepsList];
-        list[index] = value;
-        setStepsList(list);      
-    }
-
-    const handleChangeIngredients = (index, evnt)=>{    
-        const { name, value } = evnt.target;
-        const list = [...ingredientsList];
-        list[index] = value;
-        setIngredientsList(list);      
-    }
-
-    const tokenUsername = useSelector((state) => state.token?.username);
-    const tokenPlan = useSelector((state) => state.token?.plan);
-
-    useEffect(() => {
-        getRecommendedRecipes();
-
-    }, []);
-
-    const setField = (setData, data, field) => {
-        setData((prev) => ({...prev, [field]: data}));
-    }
-
-    const getRecommendedRecipes = useMemo(() => {
-        return () => {           
-            getRecipes(tokenUsername,tokenPlan,setLoading).then((res) => {
-                setRecommendedRecipes(Array.from(res.data))});
-        };
-    }, []);
-
-
-    const postThisRecipe = () => {
-        if(recipeToPost!=""){
-            console.log(recipeToPost)
-            recipeToPost.steps = stepsList || ""
-            recipeToPost.tags = tagsList || ""
-            recipeToPost.ingredientsId = ingredientsList || ""
-            recipeToPost.createdBy = tokenUsername
-            recipeToPost.duration = parseInt(recipeToPost.duration)
-            console.log(recipeToPost)
-            postRecipe(recipeToPost)
-                .then((response) => {
-                    showOperationStatus(response.status);
-                    setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
-                    getRecommendedRecipes();
-                    
-                })
-                .catch((error) => {
-                    if (error.response?.status === 400) {
-                        setError({ date: error.response.data["message"] });
-                        return;
-                    }
-                });
-        }
-        setModalPostRecipe(false);
-        setTagsList([""]);
-        setStepsList([""]);
-        setRecipeToPost(""); 
-    };
-
-    const openPostModal = () => {
-        setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
-        setModalPostRecipe(true);
-    };
-
-    const openDeleteModal = (recipeId) => {
-        setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
-        setModalDeleteRecipe(true);
-        setSelectedIdRecipe(recipeId);
-    };
     
-    const deleteCurrentRecipe = () => {
-        deleteRecipe(selectedIdRecipe).then((response) => {
-            showOperationStatus(response.status);
-            getRecommendedRecipes();
-        });
-        setModalDeleteRecipe(false);
-        setSelectedIdRecipe("");
-    };
-
-    const showOperationStatus = (status) => {
-        const icon =
-            status === 200 || status === 204 || status === 201 ? (
-                <CheckIcon className={styles.icon} />
-            ) : (
-                <PriorityHighIcon className={styles.icon} />
-            );
-        const children =
-            status === 200 || status === 204 || status === 201
-                ? "Operation completed successfully"
-                : "Operation failed";
-        setStatusMessage(
-            <Alert
-                onClose={() => {
-                    setStatusMessage();
-                }}
-                className={styles.alert}
-                icon={icon}
-                children={children}
-            />
-        );
-    };
-
-    const validateField = (setData, setError, data, field) => {
-        switch (field) {
-            case "name":
-                if (data.length === 0) setError((prev) => ({...prev, [field]: "Cannot be empty"}));
-                else setError((prev) => ({...prev, [field]: ""}));
-                break;
-            case "duration":
-                if (data.length === 0) setError((prev) => ({...prev, [field]: "Cannot be empty"}));
-                if (parseInt(data) < 0) setError((prev) => ({...prev, [field]: "Duration must be greater than zero"}));
-                else setError((prev) => ({...prev, [field]: ""}));
-                break;
-            case "summary":
-                if (data.length === 0) setError((prev) => ({...prev, [field]: "Cannot be empty"}));
-                else setError((prev) => ({...prev, [field]: ""}));
-                break;
+    const [recipes, setRecipes] = useState(null);
+    const [ingredients, setIngredients] = useState([]); // Array of ingredients
     
-        }
-        setField(setData, data, field);
-    };
-    console.log(error)
+    const [postModal, setPostModal] = useState(false);
+    const [postIngModal, setPostIngModal] = useState(false);
 
-    if (loading) return <div className={styles.recipeComponent} style={{ justifyContent: "center", alignItems: "center", height: "100vh" }}><CircularProgress /></div>;
+    const [postData, setPostData] = useState({}); // Object to store data from the form
+    const [postIngData, setPostIngData] = useState({}); // Object to store data from the ingredient form
+
+    const [error, setError] = useState({});
+    const [ingError, setIngError] = useState({});
+
+    useEffect(() => fetchRecommendedRecipes(username, plan, setRecipes, setLoading), []);
+
+    if (loading) return (<div style={{height: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}><CircularProgress/></div>)
+    if (recipes?.length === 0) return (<div style={{height: "100vh", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}><SadFace className={styles.notFoundError}/><b style={{ color: "grey" }}>No Data Found</b></div>);
     else return (
-        <>
-        <Tooltip title="Add a Recipe" arrow placement="top">
-        <IconButton
-          onClick={() => openPostModal()}
-          aria-label="delete"
-          size="large"
-          color="default"
-        >
-          <AddIcon fontSize="inherit" />
-        </IconButton>
-        </Tooltip>
-            <Grid container padding={"20px"} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-            
-                {Array.from(recommendedRecipes).map((recipe, index) => (
-                    <Grid item xs={2} sm={4} md={4} key={index}>
-                        <Item className={styles.item}>
-                            <div className={styles.card}>
-                                <CardActionArea onClick={() => router.push(`/recipes/${recipe._id}`)}>
-                                    <CardMedia
-                                        component="img"
-                                        alt=""
-                                        height="200"
-                                        image={recipe.imageUrl}
-                                    />
-                                </CardActionArea>
-
-                            </div>
-   
-                    {recipe.createdBy!=tokenUsername ? ("") :
-                      <Tooltip title="Delete this recipe" arrow placement="top">
-                      <Button
-                        onClick={() => openDeleteModal(recipe._id)}
-                        className={styles.actionButton}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    </Tooltip>
-                    }
-                                        
-                            <h2>{recipe.name}</h2>
-
-                        </Item>
-                    </Grid>
+        <><div>
+            <Button className={styles.addButton} size='large' variant="contained" onClick={() => setPostModal(true)}>Publish Recipe!</Button>
+            <div className={styles.recipeContainer} style={{ justifyContent: recipes.length > 2 ? "space-evenly" : "flex-start" }}>
+                {recipes.map((item, index) => (
+                <Link key={index} href={`/recipes/${item._id}`}>
+                    <RecipeCard img={item.imageUrl} name={item.name} summary={item.summary} style={{margin: "0px", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between"}}></RecipeCard>
+                </Link>
                 ))}
-            </Grid>
-            {statusMessage}
-            
-            { /* DELETE MODAL */}
-            <Modal open={modalDeleteRecipe} onClose={() => setModalDeleteRecipe(false)}>
-                <Box bgcolor={"white"} className={styles.modalDelete}>
-                    <div>
-                        <div className={styles.modalHeader}>
-                            <div style={{ width: "100%" }}>
-                                <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                                <Typography gutterBottom variant="body" component="div">
-                                Are you sure you want to delete this event?
-                            </Typography>
-                            </div>
-                        </div>
-                        <Button
-                            className={styles.confirmButton}
-                            onClick={() => deleteCurrentRecipe()}
-                        >
-                            <DeleteIcon className={styles.buttonIcon} /> Delete
-                        </Button>
-                        <Button
-                            className={styles.cancelButton}
-                            onClick={() => setModalDeleteRecipe(false)}
-                        >
-                            <CancelIcon className={styles.buttonIcon} /> Cancel
-                        </Button>
-                    </div>
-                </Box>
-            </Modal>
-            
-            { /* POST MODAL */}
-            {(!modalPostRecipe) ? ("") : 
-            <Modal open={modalPostRecipe} onClose={() => setModalPostRecipe(false)}>
-                <Box bgcolor={"white"} className={styles.modal}>
-                    <div>
-                        <div className={styles.modalHeader}>
-                            <div style={{ width: "100%" }}>
-                                <img src="/small-logo.png" alt="logo" className={styles.logo} />
-                                <FormControl fullWidth>
-                                <UploadImage data={selectedEditRecipe} setData={setRecipeToPost} d={200}/>
+            </div>
+        </div>
+                
+        <Modal open={postModal} onClose={() => setPostModal(false)}>
+                <Paper elevation={6} className={styles.postFormPaper}>
+                    <Typography variant="h4" style={{marginBottom: "10px", textAlign: "center", width: "100%", fontWeight: "800", color: "gray"}}>Publish Recipe</Typography>
+                    <Divider />
+                    <span style={{display: "inline-flex", padding: "10px 0"}}>
+                        <UploadImage data={postData} setData={setPostData} d={180}/>
+                        <span style={{width: "100%", display: "flex", flexDirection: "column", padding: "10px 30px", justifyContent: "space-between"}}>
+                        <TextField fullWidth value={postData.name ?? ""} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "name") } error={error.name?.length > 0 ? true : false} helperText={error.name} size="small" label="Name" variant="outlined"/>
+                        <TextField fullWidth value={postData.summary ?? ""} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "summary") } error={error.summary?.length > 0 ? true : false} helperText={error.summary} size="small" label="Summary" variant="outlined"/>
+                        <TextField fullWidth type={"number"} value={postData.duration ?? 0} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "duration") } error={error.duration?.length > 0 ? true : false} helperText={error.duration} size="small" label="Duration" variant="outlined"/>
+                        </span>
+                    </span>
+                    <Divider/>
+                    <span style={{display: "inline-flex", flexDirection: "column", gap: "30px", padding: "20px 0"}}>
+                        <Autocomplete freeSolo fullWidth multiple options={recipes.flatMap((r) => r.tags)}
+                            onChange={(ev, value) => setPostData((prev) => ({...prev, tags: value}))} value={postData.tags ?? []}
+                            renderInput={(params) => <TextField {...params} size="small" label="Tags" variant="outlined" placeholder="Add tags"/>}
+                        />
 
-                                    <Divider textAlign="left">Recipe</Divider>
+                        <span style={{display: "inline-flex", width: "100%"}}>
+                        <Autocomplete disableCloseOnSelect fullWidth multiple options={ingredients}
+                            freeSolo
+                            onChange={(ev, value) => {
+                                if (Array.isArray(value) && value.every(v => typeof v === "object")) setPostData((prev) => ({...prev, ingredients: value}));
+                                else fetchData(`ingredients?search=${ev.target.value}`).then(res => setIngredients(res.data?.result));
+                            }}
+                            value={postData.ingredients ?? []}
+                            filterOptions={(x) => x}
+                            renderInput={(params) => <TextField {...params} size="small" label="Ingredients" variant="outlined" placeholder="Add ingredients"/>}
+                            renderOption={(props, option, { selected }) => <li {...props}><Checkbox style={{ marginRight: 8 }} checked={selected} />{option.nombre}</li>}
+                            getOptionLabel={(option) => typeof option === "string" ? option : option.nombre}
+                        />
+                        <IconButton onClick={() => setPostIngModal(true)}><AddIcon/></IconButton>
+                        </span>
 
-                                    <TextField fullWidth label="Name" margin="normal" error={error.name.length > 0 ? true : false}
- helperText={error.name}
-            onChange={(e) => validateField(setRecipeToPost,setError, e.target.value, "name")
-                  }/>
-                                    <TextField fullWidth label="Duration" margin="normal" type={"number"} error={error.name.length > 0 ? true : false}
- helperText={error.duration} onChange={(e) =>
-                    validateField(setRecipeToPost,setError, e.target.value, "duration")
-                  }/>
-                                    <TextField fullWidth label="Summary" margin="normal" error={error.name.length > 0 ? true : false}
- helperText={error.summary} onChange={(e) =>
-                    validateField(setRecipeToPost,setError, e.target.value, "summary")
-                  }/>
-                                    &nbsp;
-                            <Divider textAlign="left">Tags</Divider>
-                            {
-                                tagsList.map((tag, index) => (
+                        <Autocomplete disableCloseOnSelect fullWidth multiple options={[]}
+                            freeSolo
+                            onChange={(ev, value) => setPostData((prev) => ({...prev, steps: value})) }
+                            value={postData.steps ?? []}
+                            filterOptions={(x) => x}
+                            renderInput={(params) => <TextField {...params} size="small" label="Steps" variant="outlined" placeholder="Add steps"/>}
+                        />
+                    </span>
+                    <Divider/>
+                    <span style={{display: "inline-flex", width: "100%", justifyContent: "space-around", padding: "20px"}}>
+                        <Button onClick={() => setPostModal(false)} style={{marginRight: "10px", backgroundColor: "gray"}} variant="contained">Cancel</Button>
+                        <Button onClick={() => postRecipe(postData, username, setError)?.then(() => fetchRecommendedRecipes(username, plan, setRecipes, setLoading)).catch(() => alert("Unexpected error, try again later")).finally(() => setPostModal(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Publish</Button>
+                    </span>
+                    
+                    { /* TODO vista de añadir ingredientes */}
+                    <Modal open={postIngModal} onClose={() => setPostIngModal(false)}>
+                        <Paper elevation={6} className={styles.postFormPaper}>Vista de añadir ingredientes</Paper>
+                    </Modal>
+                </Paper>
 
-                                    <div key={index} className="services">
-                                        <TextField fullWidth label={"Tag "+(index+1)} margin="normal" onChange={(evnt)=>handleChangeTags(index, evnt)}/>
-                                        {tagsList.length - 1 === index && tagsList.length < 15 && (
-
-                                            <Fab sx={{margin:'0px 14px 0px 0px'}} size="small" color="primary" aria-label="add" onClick={handleTagsAdd}>
-                                                <AddIcon />
-                                            </Fab>
-                                        )}
-                                        {tagsList.length !== 1 && (
-                                            <Fab size="small" color="primary" aria-label="add" onClick={() => handleTagsRemove(index)}>
-                                                <RemoveIcon />
-                                            </Fab>
-
-                                        )}
-                                    </div>
-                                ))}
-
-&nbsp;
-                            <Divider textAlign="left">Ingredients</Divider>
-                            {
-                                ingredientsList.map((ingredient, index) => (
-
-                                    <div key={index} className="services">
-                                        <TextField fullWidth label={"Ingredient "+(index+1)} margin="normal" onChange={(evnt)=>handleChangeIngredients(index, evnt)
-                  }/>
-                                        {ingredientsList.length - 1 === index && ingredientsList.length < 15 && (
-
-                                            <Fab sx={{margin:'0px 14px 0px 0px'}} size="small" color="primary" aria-label="add" onClick={handleIngredientsAdd}>
-                                                <AddIcon />
-                                            </Fab>
-                                        )}
-                                        {ingredientsList.length !== 1 && (
-                                            <Fab size="small" color="primary" aria-label="add" onClick={() => handleIngredientsRemove(index)}>
-                                                <RemoveIcon />
-                                            </Fab>
-
-                                        )}
-                                    </div>
-                                ))}
-                            &nbsp;
-                            <Divider textAlign="left">Steps</Divider>
-                            {
-                                stepsList.map((step, index) => (
-
-                                    <div key={index} className="services">
-                                        <TextField fullWidth label={"Step "+(index+1)} margin="normal" onChange={(evnt)=>handleChangeSteps(index, evnt)
-                  }/>
-                                        {stepsList.length - 1 === index && stepsList.length < 15 && (
-
-                                            <Fab sx={{margin:'0px 14px 0px 0px'}} size="small" color="primary" aria-label="add" onClick={handleStepsAdd}>
-                                                <AddIcon />
-                                            </Fab>
-                                        )}
-                                        {stepsList.length !== 1 && (
-                                            <Fab size="small" color="primary" aria-label="add" onClick={() => handleStepsRemove(index)}>
-                                                <RemoveIcon />
-                                            </Fab>
-
-                                        )}
-                                    </div>
-                                ))}
-
-                                
-
-                                </FormControl>
-                            </div>
-                        </div>
-                        <Button
-                            className={styles.confirmButton}
-                            onClick={() => postThisRecipe()}
-                        >
-                            <AddIcon className={styles.buttonIcon} />
-                            Save
-                        </Button>
-                        <Button
-                            className={styles.cancelButton}
-                            onClick={() => {setError({ name: "", summary: "", duration: 0, steps: [""], tags: [""], createdBy:"", imageUrl:"", ingredientsId:[""] });
-                            ;setModalPostRecipe(false)}}
-                        >
-                            <CancelIcon className={styles.buttonIcon} /> Cancel
-                        </Button>
-                    </div>
-                </Box>
-            </Modal>
-            }           
-        </>
-    );
+        </Modal></>
+    )
 }

@@ -17,10 +17,6 @@ export function fetchRecipes(path, setData, setLoading,) {
     });
 }
 
-export function fetchData(path) {
-    return axios.get(`${backendUrl}${path}`, {withCredentials: true});
-}
-
 export function addToPlanner(recipeId, date) {
     return axios.post(`${backendUrl}events`, {id: recipeId, timestamp: date}, {withCredentials: true});
 }
@@ -48,73 +44,35 @@ export const validateField = (setData, setError, data, field) => {
 };
 
 
-// Index View functions
-function apiGet(endpoint) {
-    return axios.get(`${backendUrl}${endpoint}`, { withCredentials: true });
+// CRUD functions
+export function fetchRecommendedRecipes(username, plan, setRecipes, setLoading) {
+    fetchData(`recipes?username=${username}&plan=${plan}`)
+        .then((res) => { setRecipes(res.data); setLoading(false) })
+        .catch((err) => {
+            setRecipes(null);
+            setLoading(false);
+            if (err.response?.status !== 404) {
+                alert("Something went wrong, please try again later.");
+            }
+        });
 }
 
-async function apiPut(endpoint, body) {
-    return await axios.put(`${backendUrl}${endpoint}`, body, {
-        withCredentials: true,
-    });
+export function fetchData(path) {
+    return axios.get(`${backendUrl}${path}`, {withCredentials: true});
 }
 
-async function apiPost(endpoint, body) {
-    console.log(`${backendUrl}${endpoint}`)
-    return await axios.post(`${backendUrl}${endpoint}`, body, {
-        withCredentials: true,
-    });
+export function postRecipe(data, username, setError) {
+    if ((data.name ?? "").length === 0) return setError((prev) => ({...prev, name: "Cannot be empty"}));
+    if ((data.duration ?? "").length === 0) return setError((prev) => ({...prev, duration: "Cannot be empty"}));
+    if (parseInt(data?.duration) < 0) return setError((prev) => ({...prev, duration: "Duration must be greater than zero"}));
+    if ((data.summary ?? "").length === 0) return setError((prev) => ({...prev, summary: "Cannot be empty"}));
+    
+    // TODO Save image
+    return axios.post(`${backendUrl}recipes`, {...data, createdBy: username}, {withCredentials: true});
 }
-
-async function apiDelete(endpoint) {
-    return await axios.delete(`${backendUrl}${endpoint}`, {
-        withCredentials: true,
-    });
-}
-
 
 export function editRecipe(recipeId, data) {
-    const endpoint = `recipes/${recipeId}`;
-    return apiPut(endpoint, data);
-}
-
-export async function postRecipe(data) {
-    const endpoint = "recipes";
-    
-    return await apiPost(endpoint, data);
-}
-
-
-export async function getRecipes(username, plan, setLoading) {
-    const endpoint = "recipes";
-    if(username==undefined||plan==undefined){
-        let response = await apiGet(endpoint);
-        setLoading(false);
-        return response;
-    }else{
-        let response = await apiGet(endpoint+`?username=${username}&plan=${plan}`);
-        setLoading(false);
-        return response;
-    }
-
-}
-
-export async function deleteRecipe(recipeId) {
-    const endpoint = `recipes/${recipeId}`;
-    return await apiDelete(endpoint);
-}
-
-export async function getRecipe(recipeId) {
-    const endpoint = `recipes/${recipeId}`;
-    return await apiGet(endpoint);
-}
-
-export function getRecommendations(username, plan) {
-    const endpoint = `recommendation/${username}/${plan}`;
-    return apiGet(endpoint);
-}
-
-export async function getRecommendedRecipes(ids) {
-    const endpoint = `recipes/recommendation`;
-    return await apiPost(endpoint, ids);
+    return axios.put(`${backendUrl}recipes/${recipeId}`, data, {
+        withCredentials: true,
+    });
 }

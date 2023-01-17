@@ -6,7 +6,7 @@ import { useState } from 'react';
 export default function UploadImage({data, setData, d}) {
     const [hover, setHover] = useState(false);
 
-    const setField = (setData, value) => setData(prev => ({...prev, avatar: {file: value, url: URL.createObjectURL(value)}}));
+    const setField = (setData, value) => setData(prev => ({...prev, avatar: {file: value, url: value ? URL.createObjectURL(value) : ""}}));
 
     const styles = {
         icon: {
