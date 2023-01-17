@@ -1,12 +1,14 @@
-import { CircularProgress, Button, Link, Modal, Paper, Typography, Divider, TextField, Autocomplete, Checkbox, IconButton } from "@mui/material";
+import { CircularProgress, Button, Link, Modal, Paper, Typography, Divider, TextField, Autocomplete, Checkbox, IconButton, Avatar } from "@mui/material";
 import { useSelector } from "react-redux";
 import { fetchData, fetchRecommendedRecipes, postRecipe, validateField } from "../../api/recipeApi";
+import { fetchIngredientsData } from "../../api/ingredientsApi";
 import { useState, useEffect } from "react";
 import styles from "./Recipes.module.css";
 import SadFace from "@mui/icons-material/SentimentVeryDissatisfied";
 import RecipeCard from "../recipebooks/components/RecipeCard";
 import UploadImage from "../../components/UploadImage";
 import AddIcon from '@mui/icons-material/Add';
+import IngredientsList from "../../components/IngredientsList";
 
 export default function Recipes() {
     const {username, plan} = useSelector((state) => state.token);
@@ -24,7 +26,25 @@ export default function Recipes() {
     const [error, setError] = useState({});
     const [ingError, setIngError] = useState({});
 
-    useEffect(() => fetchRecommendedRecipes(username, plan, setRecipes, setLoading), []);
+    const [checked, setChecked] = useState([]);
+
+    const handleCheckIngredient = (value) => () => {
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        setChecked(newChecked);
+    };
+
+    useEffect(() => {
+        fetchRecommendedRecipes(username, plan, setRecipes, setLoading)
+        fetchIngredientsData(100, "", setIngredients)
+    }, []);
 
     if (loading) return (<div style={{height: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}><CircularProgress/></div>)
     if (recipes?.length === 0) return (<div style={{height: "100vh", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}><SadFace className={styles.notFoundError}/><b style={{ color: "grey" }}>No Data Found</b></div>);
@@ -69,7 +89,9 @@ export default function Recipes() {
                             value={postData.ingredients ?? []}
                             filterOptions={(x) => x}
                             renderInput={(params) => <TextField {...params} size="small" label="Ingredients" variant="outlined" placeholder="Add ingredients"/>}
-                            renderOption={(props, option, { selected }) => <li {...props}><Checkbox style={{ marginRight: 8 }} checked={selected} />{option.nombre}</li>}
+                            renderOption={(props, option, { selected }) => 
+                                <li {...props}><Checkbox style={{ marginRight: 8 }} checked={selected} /><Avatar src={option.imagen_peq} style={{marginRight: "10px"}}/>{option.nombre}</li>
+                            }
                             getOptionLabel={(option) => typeof option === "string" ? option : option.nombre}
                         />
                         <IconButton onClick={() => setPostIngModal(true)}><AddIcon/></IconButton>
@@ -91,7 +113,9 @@ export default function Recipes() {
                     
                     { /* TODO vista de añadir ingredientes */}
                     <Modal open={postIngModal} onClose={() => setPostIngModal(false)}>
-                        <Paper elevation={6} className={styles.postFormPaper}>Vista de añadir ingredientes</Paper>
+                        <Paper elevation={6} className={styles.postFormPaper}>
+                            <IngredientsList />
+                        </Paper>
                     </Modal>
                 </Paper>
 

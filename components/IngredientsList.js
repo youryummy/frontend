@@ -17,10 +17,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import { Button, Dialog, DialogContent, DialogTitle, TextField } from '@material-ui/core';
-import axios from 'axios';
 import { experimentalStyled as styled } from "@mui/material/styles";
+import { fetchIngredientsData, createIngredient, updateIngredient, deleteIngredient } from '../api/ingredientsApi';
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -198,9 +197,7 @@ export default function EnhancedTable() {
   }, []);
   
   async function fetchData(limit, search) {
-    const response = await fetch(`${backendUrl}/api/v1/ingredients?limit=${limit}&search=${search}`);
-    const data = await response.json();
-    setIngredients(data.result);
+    await fetchIngredientsData(limit, search, setIngredients);
   }
 
   const handleAddClick = () => {
@@ -222,11 +219,11 @@ export default function EnhancedTable() {
   async function saveIngredient() {
     
     if (isIngredientBeingCreated) {
-      const response = await axios.post(`${backendUrl}/api/v1/ingredients`, {...ingredientBeingEdited, imagen: "https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg"});
+      const response = await createIngredient(ingredientBeingEdited);
       setIngredients([response.data, ...ingredients]);
       setIsIngredientBeingCreated(false);
     } else {
-      const response = await axios.put(`${backendUrl}/api/v1/ingredients/${ingredientBeingEdited._id}`, {...ingredientBeingEdited});
+      await updateIngredient(ingredientBeingEdited);
       setIngredients(ingredients.map(i => i._id === ingredientBeingEdited._id ? ingredientBeingEdited : i));
     }
     setOpen(false);
@@ -234,7 +231,7 @@ export default function EnhancedTable() {
   }
 
   async function handleDeleteIngredient(id) {
-    await axios.delete(`${backendUrl}/api/v1/ingredients/${id}`);
+    await deleteIngredient(id);
     setIngredients(ingredients.filter(i => i._id !== id));
   }
 
@@ -263,7 +260,7 @@ export default function EnhancedTable() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0;
 
   return (
-    <Item style={{ borderRadius: "20px", height: "auto", padding: "20px", margin: "20px" }}>
+    <Item style={{ borderRadius: "20px", height: "auto", padding: "20px", margin: "20px", maxHeight: "800px", overflow: "auto" }}>
         <TableContainer>
           <Box style={{display: "flex", alignItems: "flex-end", margin: "0px 50px 0px 0px"}}>
             <Typography
