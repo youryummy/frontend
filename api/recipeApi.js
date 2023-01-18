@@ -49,7 +49,7 @@ export function fetchRecommendedRecipes(username, plan, setRecipes, setLoading) 
     fetchData(`recipes?username=${username}&plan=${plan}`)
         .then((res) => { setRecipes(res.data); setLoading(false) })
         .catch((err) => {
-            setRecipes(null);
+            setRecipes([]);
             setLoading(false);
             if (err.response?.status !== 404) {
                 alert("Something went wrong, please try again later.");

@@ -14,7 +14,7 @@ export default function Recipes() {
     const {username, plan} = useSelector((state) => state.token);
     const [loading, setLoading] = useState(true);
     
-    const [recipes, setRecipes] = useState(null);
+    const [recipes, setRecipes] = useState([]);
     const [ingredients, setIngredients] = useState([]); // Array of ingredients
     
     const [postModal, setPostModal] = useState(false);
@@ -22,21 +22,7 @@ export default function Recipes() {
 
     const [postData, setPostData] = useState({}); // Object to store data from the form
     const [error, setError] = useState({});
-    const [checked, setChecked] = useState([]);
-
-    const handleCheckIngredient = (value) => () => {
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
-        setChecked(newChecked);
-    };
-
+    
     useEffect(() => {
         fetchRecommendedRecipes(username, plan, setRecipes, setLoading)
         fetchIngredientsData(100, "", setIngredients)
