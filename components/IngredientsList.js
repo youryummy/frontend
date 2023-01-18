@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from "react-redux";
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -150,17 +151,7 @@ function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIn
           helperText={error.nombre}
         />
         <TextField
-          style={{ width: "45%", marginBottom: "10px"}}
-          label="Created by"
-          value={ingredient.creado_por}
-          onChange={(ev) =>
-            validateField(setIngredientBeingEdited, setError, ev.target.value, "creado_por")
-          }
-          error={error.creado_por.length > 0 ? true : false}
-          helperText={error.creado_por}
-        />
-        <TextField
-          style={{ width: "45%", marginBottom: "10px", float: "right" }}
+          style={{ width: "100%", marginBottom: "10px", float: "right" }}
           label="Brand"
           value={ingredient.marca}
           onChange={(ev) =>
@@ -201,9 +192,9 @@ export default function EnhancedTable() {
   const [isIngredientBeingCreated, setIsIngredientBeingCreated] = useState(false);
   const [ingredientBeingEdited, setIngredientBeingEdited] = useState({});
   const [filterValue, setFilterValue] = useState("");
+  const { username } = useSelector((state) => state.token);
   const [error, setError] = useState({
     nombre: "",
-    creado_por: "",
     marca: "",
     url: ""
   });
@@ -217,7 +208,7 @@ export default function EnhancedTable() {
   }
 
   const handleAddClick = () => {
-    setIngredientBeingEdited({nombre: "New ingredient", creado_por: "Me", marca: "My brand", url: "http://example.com"});
+    setIngredientBeingEdited({nombre: "New ingredient", marca: "My brand", url: "http://example.com"});
     setIsIngredientBeingCreated(true);
     setOpen(true);
   }
@@ -234,25 +225,19 @@ export default function EnhancedTable() {
 
   async function saveIngredient() {
 
-    if (error.nombre.length > 0 || error.creado_por.length > 0 || error.marca.length > 0 || error.url.length > 0) {
+    if (error.nombre.length > 0 || error.marca.length > 0 || error.url.length > 0) {
       return;
     } else {
       if (isIngredientBeingCreated) {
-        const response = await createIngredient(ingredientBeingEdited);
-        setIngredients([response.data, ...ingredients]);
-        setIsIngredientBeingCreated(false);
+        await createIngredient(ingredientBeingEdited, setIngredients, setIsIngredientBeingCreated, setOpen, setIngredientBeingEdited, username);
       } else {
-        await updateIngredient(ingredientBeingEdited);
-        setIngredients(ingredients.map(i => i._id === ingredientBeingEdited._id ? ingredientBeingEdited : i));
+        await updateIngredient(ingredientBeingEdited, setIngredients, setOpen, setIngredientBeingEdited);
       }
-      setOpen(false);
-      setIngredientBeingEdited({});
     }
   }
 
   async function handleDeleteIngredient(id) {
-    await deleteIngredient(id);
-    setIngredients(ingredients.filter(i => i._id !== id));
+    await deleteIngredient(id, setIngredients);
   }
 
   const handleRequestSort = (event, property) => {

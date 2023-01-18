@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080"}/api/v1/ingredients`;
+const backendUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080"}/api/v1/ingredients/`;
 
 
 export const validateField = (setData, setError, data, field) => {
@@ -41,20 +41,51 @@ export function fetchRecommendedRecipes(username, plan, setRecipes, setLoading) 
 }
 
 export async function fetchIngredientsData(limit, search, setIngredients) {
-    const response = await fetch(`${backendUrl}?limit=${limit}&search=${search}`);
-    const data = await response.json();
-    setIngredients(data.result);
-    return data.result;
+    try {
+        const response = await fetch(`${backendUrl}?limit=${limit}&search=${search}`, {withCredentials: true})
+        const data = await response.json();
+        setIngredients(data.result);
+        return data.result;
+    } catch (err) {
+        if (err.response?.status === 403) alert("You can't modify an ingredient that you didn't create.");
+        else alert("Something went wrong, please try again later.");
+        return [];
+    }
 }
 
-export async function createIngredient(body) {
-    return await axios.post(`${backendUrl}`, {...body, imagen: "https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg"});
+export async function createIngredient(body, setIngredients, setIsIngredientBeingCreated, setOpen, setIngredientBeingEdited, username) {
+    await axios.post(`${backendUrl}`, {...body, creado_por: username, imagen: "https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg"}, {withCredentials: true})
+    .then((response) => {
+        setIngredients((prev) => prev.concat(response.data))
+        setIsIngredientBeingCreated(false)
+        setOpen(false);
+        setIngredientBeingEdited({});
+    })
+    .catch((err) => {
+        if (err.response?.status === 403) alert("You can't modify an ingredient that you didn't create.");
+        else alert("Something went wrong, please try again later.");
+    });
 }
 
-export async function updateIngredient(ingredient) {
-    return await axios.put(`${backendUrl}${ingredient._id}`, {...ingredient})
+export async function updateIngredient(ingredient, setIngredients, setOpen, setIngredientBeingEdited) {
+    await axios.put(`${backendUrl}${ingredient._id}`, {...ingredient}, {withCredentials: true})
+    .then(() => {
+        setIngredients((prev) => prev.map((i) => i._id === ingredient._id ? ingredient : i));
+        setOpen(false);
+        setIngredientBeingEdited({});
+    })
+    .catch((err) => {
+        if (err.response?.status === 403) alert("You can't modify an ingredient that you didn't create.");
+        else alert("Something went wrong, please try again later.");
+    });
+
 }
 
-export async function deleteIngredient(id) {
-    return await axios.delete(`${backendUrl}${id}`);
+export async function deleteIngredient(id, setIngredients) {
+    await axios.delete(`${backendUrl}${id}`, {withCredentials: true})
+    .then(() => setIngredients((prev) => prev.filter((i) => i._id !== id)))
+    .catch((err) => {
+        if (err.response?.status === 403) alert("You can't modify an ingredient that you didn't create.");
+        else alert("Something went wrong, please try again later.");
+    });
 }

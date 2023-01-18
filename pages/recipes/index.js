@@ -21,11 +21,7 @@ export default function Recipes() {
     const [postIngModal, setPostIngModal] = useState(false);
 
     const [postData, setPostData] = useState({}); // Object to store data from the form
-    const [postIngData, setPostIngData] = useState({}); // Object to store data from the ingredient form
-
     const [error, setError] = useState({});
-    const [ingError, setIngError] = useState({});
-
     const [checked, setChecked] = useState([]);
 
     const handleCheckIngredient = (value) => () => {
@@ -61,64 +57,62 @@ export default function Recipes() {
         </div>
                 
         <Modal open={postModal} onClose={() => setPostModal(false)}>
-                <Paper elevation={6} className={styles.postFormPaper}>
-                    <Typography variant="h4" style={{marginBottom: "10px", textAlign: "center", width: "100%", fontWeight: "800", color: "gray"}}>Publish Recipe</Typography>
-                    <Divider />
-                    <span style={{display: "inline-flex", padding: "10px 0"}}>
-                        <UploadImage data={postData} setData={setPostData} d={180}/>
-                        <span style={{width: "100%", display: "flex", flexDirection: "column", padding: "10px 30px", justifyContent: "space-between"}}>
-                        <TextField fullWidth value={postData.name ?? ""} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "name") } error={error.name?.length > 0 ? true : false} helperText={error.name} size="small" label="Name" variant="outlined"/>
-                        <TextField fullWidth value={postData.summary ?? ""} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "summary") } error={error.summary?.length > 0 ? true : false} helperText={error.summary} size="small" label="Summary" variant="outlined"/>
-                        <TextField fullWidth type={"number"} value={postData.duration ?? 0} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "duration") } error={error.duration?.length > 0 ? true : false} helperText={error.duration} size="small" label="Duration" variant="outlined"/>
-                        </span>
+            <Paper elevation={6} className={styles.postFormPaper}>
+                <Typography variant="h4" style={{marginBottom: "10px", textAlign: "center", width: "100%", fontWeight: "800", color: "gray"}}>Publish Recipe</Typography>
+                <Divider />
+                <span style={{display: "inline-flex", padding: "10px 0"}}>
+                    <UploadImage data={postData} setData={setPostData} d={180}/>
+                    <span style={{width: "100%", display: "flex", flexDirection: "column", padding: "10px 30px", justifyContent: "space-between"}}>
+                    <TextField fullWidth value={postData.name ?? ""} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "name") } error={error.name?.length > 0 ? true : false} helperText={error.name} size="small" label="Name" variant="outlined"/>
+                    <TextField fullWidth value={postData.summary ?? ""} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "summary") } error={error.summary?.length > 0 ? true : false} helperText={error.summary} size="small" label="Summary" variant="outlined"/>
+                    <TextField fullWidth type={"number"} value={postData.duration ?? 0} onChange={(ev) => validateField(setPostData, setError, ev.target.value, "duration") } error={error.duration?.length > 0 ? true : false} helperText={error.duration} size="small" label="Duration" variant="outlined"/>
                     </span>
-                    <Divider/>
-                    <span style={{display: "inline-flex", flexDirection: "column", gap: "30px", padding: "20px 0"}}>
-                        <Autocomplete freeSolo fullWidth multiple options={recipes.flatMap((r) => r.tags)}
-                            onChange={(ev, value) => setPostData((prev) => ({...prev, tags: value}))} value={postData.tags ?? []}
-                            renderInput={(params) => <TextField {...params} size="small" label="Tags" variant="outlined" placeholder="Add tags"/>}
-                        />
+                </span>
+                <Divider/>
+                <span style={{display: "inline-flex", flexDirection: "column", gap: "30px", padding: "20px 0"}}>
+                    <Autocomplete freeSolo fullWidth multiple options={recipes.flatMap((r) => r.tags)}
+                        onChange={(ev, value) => setPostData((prev) => ({...prev, tags: value}))} value={postData.tags ?? []}
+                        renderInput={(params) => <TextField {...params} size="small" label="Tags" variant="outlined" placeholder="Add tags"/>}
+                    />
 
-                        <span style={{display: "inline-flex", width: "100%"}}>
-                        <Autocomplete disableCloseOnSelect fullWidth multiple options={ingredients}
-                            freeSolo
-                            onChange={(ev, value) => {
-                                if (Array.isArray(value) && value.every(v => typeof v === "object")) setPostData((prev) => ({...prev, ingredients: value}));
-                                else fetchData(`ingredients?search=${ev.target.value}`).then(res => setIngredients(res.data?.result));
-                            }}
-                            value={postData.ingredients ?? []}
-                            filterOptions={(x) => x}
-                            renderInput={(params) => <TextField {...params} size="small" label="Ingredients" variant="outlined" placeholder="Add ingredients"/>}
-                            renderOption={(props, option, { selected }) => 
-                                <li {...props}><Checkbox style={{ marginRight: 8 }} checked={selected} /><Avatar src={option.imagen_peq} style={{marginRight: "10px"}}/>{option.nombre}</li>
-                            }
-                            getOptionLabel={(option) => typeof option === "string" ? option : option.nombre}
-                        />
-                        <IconButton onClick={() => setPostIngModal(true)}><AddIcon/></IconButton>
-                        </span>
-
-                        <Autocomplete disableCloseOnSelect fullWidth multiple options={[]}
-                            freeSolo
-                            onChange={(ev, value) => setPostData((prev) => ({...prev, steps: value})) }
-                            value={postData.steps ?? []}
-                            filterOptions={(x) => x}
-                            renderInput={(params) => <TextField {...params} size="small" label="Steps" variant="outlined" placeholder="Add steps"/>}
-                        />
+                    <span style={{display: "inline-flex", width: "100%"}}>
+                    <Autocomplete disableCloseOnSelect fullWidth multiple options={ingredients}
+                        freeSolo
+                        onChange={(ev, value) => {
+                            if (Array.isArray(value) && value.every(v => typeof v === "object")) setPostData((prev) => ({...prev, ingredients: value}));
+                            else fetchData(`ingredients?search=${ev.target.value}`).then(res => setIngredients(res.data?.result));
+                        }}
+                        value={postData.ingredients ?? []}
+                        filterOptions={(x) => x}
+                        renderInput={(params) => <TextField {...params} size="small" label="Ingredients" variant="outlined" placeholder="Add ingredients"/>}
+                        renderOption={(props, option, { selected }) => 
+                            <li {...props}><Checkbox style={{ marginRight: 8 }} checked={selected} /><Avatar src={option.imagen_peq} style={{marginRight: "10px"}}/>{option.nombre}</li>
+                        }
+                        getOptionLabel={(option) => typeof option === "string" ? option : option.nombre}
+                    />
+                    <IconButton onClick={() => setPostIngModal(true)}><AddIcon/></IconButton>
                     </span>
-                    <Divider/>
-                    <span style={{display: "inline-flex", width: "100%", justifyContent: "space-around", padding: "20px"}}>
-                        <Button onClick={() => setPostModal(false)} style={{marginRight: "10px", backgroundColor: "gray"}} variant="contained">Cancel</Button>
-                        <Button onClick={() => postRecipe(postData, username, setError)?.then(() => fetchRecommendedRecipes(username, plan, setRecipes, setLoading)).catch(() => alert("Unexpected error, try again later")).finally(() => setPostModal(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Publish</Button>
-                    </span>
-                    
-                    { /* TODO vista de añadir ingredientes */}
-                    <Modal open={postIngModal} onClose={() => setPostIngModal(false)}>
-                        <Paper elevation={6} className={styles.postFormPaper}>
-                            <IngredientsList />
-                        </Paper>
-                    </Modal>
-                </Paper>
 
+                    <Autocomplete disableCloseOnSelect fullWidth multiple options={[]}
+                        freeSolo
+                        onChange={(ev, value) => setPostData((prev) => ({...prev, steps: value})) }
+                        value={postData.steps ?? []}
+                        filterOptions={(x) => x}
+                        renderInput={(params) => <TextField {...params} size="small" label="Steps" variant="outlined" placeholder="Add steps"/>}
+                    />
+                </span>
+                <Divider/>
+                <span style={{display: "inline-flex", width: "100%", justifyContent: "space-around", padding: "20px"}}>
+                    <Button onClick={() => setPostModal(false)} style={{marginRight: "10px", backgroundColor: "gray"}} variant="contained">Cancel</Button>
+                    <Button onClick={() => postRecipe(postData, username, setError)?.then(() => fetchRecommendedRecipes(username, plan, setRecipes, setLoading)).catch(() => alert("Unexpected error, try again later")).finally(() => setPostModal(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Publish</Button>
+                </span>
+                
+                <Modal open={postIngModal} onClose={() => setPostIngModal(false)}>
+                    <Paper elevation={6} className={styles.postFormPaper}>
+                        <IngredientsList />
+                    </Paper>
+                </Modal>
+            </Paper>
         </Modal></>
     )
 }
