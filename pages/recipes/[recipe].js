@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { fetchRecipes, fetchRecommendedRecipes, addToPlanner, editRecipe, validateField } from "../../api/recipeApi";
-import { Paper, CardMedia, Typography, Button, IconButton, TextField, Divider, FormControl, Avatar, Autocomplete } from "@mui/material";
+import { Paper, CardMedia, Typography, Button, IconButton, TextField, Divider, FormControl, Avatar, Autocomplete, Checkbox } from "@mui/material";
 import { fetchIngredientsData } from "../../api/ingredientsApi";
 import { useSelector } from "react-redux";
 import styles from "./Recipes.module.css";
@@ -260,7 +260,7 @@ export default function Recipe() {
                 <Divider/>
                 <span style={{display: "inline-flex", width: "100%", justifyContent: "space-around", padding: "20px"}}>
                     <Button onClick={() => setEdit(false)} style={{marginRight: "10px", backgroundColor: "gray"}} variant="contained">Cancel</Button>
-                    <Button onClick={() => editRecipe(data._id, data).then(() => setEdit(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Edit</Button>
+                    <Button onClick={() => editRecipe(data._id, data, setError).then(() => setEdit(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Edit</Button>
                 </span>
                 
                 <Modal open={postIngModal} onClose={() => setPostIngModal(false)}>

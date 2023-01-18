@@ -67,13 +67,16 @@ export function postRecipe(data, username, setError) {
     if (parseInt(data?.duration) < 0) return setError((prev) => ({...prev, duration: "Duration must be greater than zero"}));
     if ((data.summary ?? "").length === 0) return setError((prev) => ({...prev, summary: "Cannot be empty"}));
     
-    console.log("Data: ", data)
     // TODO Save image
     return axios.post(`${backendUrl}recipes`, {...data, createdBy: username}, {withCredentials: true});
 }
 
-export function editRecipe(recipeId, data) {
-    console.log("Data: ", data);
+export function editRecipe(recipeId, data, setError) {
+    if ((data.name ?? "").length === 0) return setError((prev) => ({...prev, name: "Cannot be empty"}));
+    if ((data.duration ?? "").length === 0) return setError((prev) => ({...prev, duration: "Cannot be empty"}));
+    if (parseInt(data?.duration) < 0) return setError((prev) => ({...prev, duration: "Duration must be greater than zero"}));
+    if ((data.summary ?? "").length === 0) return setError((prev) => ({...prev, summary: "Cannot be empty"}));
+
     return axios.put(`${backendUrl}recipes/${recipeId}`, data, {
         withCredentials: true,
     });
