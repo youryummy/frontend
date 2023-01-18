@@ -260,7 +260,7 @@ export default function Recipe() {
                 <Divider/>
                 <span style={{display: "inline-flex", width: "100%", justifyContent: "space-around", padding: "20px"}}>
                     <Button onClick={() => setEdit(false)} style={{marginRight: "10px", backgroundColor: "gray"}} variant="contained">Cancel</Button>
-                    <Button onClick={() => editRecipe(data._id, data, setError).then(() => setEdit(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Edit</Button>
+                    <Button onClick={() => editRecipe(data._id, data, setError)?.then(() => setEdit(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Edit</Button>
                 </span>
                 
                 <Modal open={postIngModal} onClose={() => setPostIngModal(false)}>
