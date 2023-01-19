@@ -75,7 +75,7 @@ export default function Plans(props) {
                         <ListItem><ListItemIcon><AutoModeIcon/></ListItemIcon><ListItemText primary="Recomendaciones rápidas"/><CheckRoundedIcon color="success"/></ListItem>
                         <ListItem><ListItemIcon><DescriptionOutlinedIcon/></ListItemIcon><ListItemText primary="SLA"/><CheckRoundedIcon color="success"/></ListItem>
                         </List>
-                        <span style={{width: "100%"}}><Divider/><h1 style={{color: "gray", width: "100%", textAlign: "center"}}>7.00 € / month</h1></span>
+                        <span style={{width: "100%"}}><Divider/><h1 style={{color: "gray", width: "100%", textAlign: "center"}}>25.99 € / month</h1></span>
                     </ListItem>
 
                     <Divider orientation={window?.innerWidth < 992 ? "horizontal" : "vertical"} flexItem />
@@ -96,7 +96,7 @@ export default function Plans(props) {
                         <ListItem><ListItemIcon><AutoModeIcon/></ListItemIcon><ListItemText primary="Recomendaciones rápidas"/><CheckRoundedIcon color="success"/></ListItem>
                         <ListItem><ListItemIcon><DescriptionOutlinedIcon/></ListItemIcon><ListItemText primary="SLA"/><CheckRoundedIcon color="success"/></ListItem>
                         </List>
-                        <span style={{width: "100%"}}><Divider/><h1 style={{color: "gray", width: "100%", textAlign: "center"}}>15.00 € / month</h1></span>
+                        <span style={{width: "100%"}}><Divider/><h1 style={{color: "gray", width: "100%", textAlign: "center"}}>29.99 € / month</h1></span>
                     </ListItem>
                     </div>
                 </List>
