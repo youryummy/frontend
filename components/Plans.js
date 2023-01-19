@@ -19,6 +19,7 @@ import EventRepeatOutlinedIcon from '@mui/icons-material/EventRepeatOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { PayPalButton } from 'react-paypal-button-v2';
+import AutoModeIcon from '@mui/icons-material/AutoMode';
 
 import { useState } from 'react';
 
@@ -50,6 +51,7 @@ export default function Plans(props) {
                         <ListItem><ListItemIcon><StarBorderOutlinedIcon/></ListItemIcon><ListItemText primary="130 Ratings per month" secondary="12 Ratings per day"/></ListItem>
                         <ListItem><ListItemIcon><LunchDiningOutlinedIcon/></ListItemIcon><ListItemText primary="150 Ingredients per month" secondary="10 Ingredients per day"/></ListItem>
                         <ListItem><ListItemIcon><EventRepeatOutlinedIcon/></ListItemIcon><ListItemText primary="Google Calendar Sync."/><CloseRoundedIcon color="error"/></ListItem>
+                        <ListItem><ListItemIcon><AutoModeIcon/></ListItemIcon><ListItemText primary="Recomendaciones rápidas"/><CloseRoundedIcon color="error"/></ListItem>
                         <ListItem><ListItemIcon><DescriptionOutlinedIcon/></ListItemIcon><ListItemText primary="SLA"/><CloseRoundedIcon color="error"/></ListItem>
                         </List>
                         <span style={{width: "100%"}}><Divider/><h1 style={{color: "gray", width: "100%", textAlign: "center"}}>Free</h1></span>
@@ -70,6 +72,7 @@ export default function Plans(props) {
                         <ListItem><ListItemIcon><StarBorderOutlinedIcon/></ListItemIcon><ListItemText primary="400 Ratings per month" secondary="35 Ratings per day"/></ListItem>
                         <ListItem><ListItemIcon><LunchDiningOutlinedIcon/></ListItemIcon><ListItemText primary="450 Ingredients per month" secondary="30 Ingredients per day"/></ListItem>
                         <ListItem><ListItemIcon><EventRepeatOutlinedIcon/></ListItemIcon><ListItemText primary="Google Calendar Sync."/><CheckRoundedIcon color="success"/></ListItem>
+                        <ListItem><ListItemIcon><AutoModeIcon/></ListItemIcon><ListItemText primary="Recomendaciones rápidas"/><CheckRoundedIcon color="success"/></ListItem>
                         <ListItem><ListItemIcon><DescriptionOutlinedIcon/></ListItemIcon><ListItemText primary="SLA"/><CheckRoundedIcon color="success"/></ListItem>
                         </List>
                         <span style={{width: "100%"}}><Divider/><h1 style={{color: "gray", width: "100%", textAlign: "center"}}>7.00 € / month</h1></span>
@@ -90,6 +93,7 @@ export default function Plans(props) {
                         <ListItem><ListItemIcon><StarBorderOutlinedIcon/></ListItemIcon><ListItemText primary="Unlimited ratings"/></ListItem>
                         <ListItem><ListItemIcon><LunchDiningOutlinedIcon/></ListItemIcon><ListItemText primary="900 per month" secondary="15 Ingredients per day"/></ListItem>
                         <ListItem><ListItemIcon><EventRepeatOutlinedIcon/></ListItemIcon><ListItemText primary="Google Calendar Sync."/><CheckRoundedIcon color="success"/></ListItem>
+                        <ListItem><ListItemIcon><AutoModeIcon/></ListItemIcon><ListItemText primary="Recomendaciones rápidas"/><CheckRoundedIcon color="success"/></ListItem>
                         <ListItem><ListItemIcon><DescriptionOutlinedIcon/></ListItemIcon><ListItemText primary="SLA"/><CheckRoundedIcon color="success"/></ListItem>
                         </List>
                         <span style={{width: "100%"}}><Divider/><h1 style={{color: "gray", width: "100%", textAlign: "center"}}>15.00 € / month</h1></span>
