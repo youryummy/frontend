@@ -17,7 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
-import { Button, Dialog, DialogContent, DialogTitle, TextField } from '@material-ui/core';
+import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, TextField } from '@material-ui/core';
 import { experimentalStyled as styled } from "@mui/material/styles";
 import { validateField, fetchIngredientsData, createIngredient, updateIngredient, deleteIngredient } from '../api/ingredientsApi';
 
@@ -134,7 +134,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIngredientBeingEdited, error, setError }) {
+function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIngredientBeingEdited, error, setError, loadingButton, setLoadingButton }) {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit ingredient</DialogTitle>
@@ -174,7 +174,7 @@ function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIn
       </DialogContent>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
         <div style={{ width: "50%", display: "flex", justifyContent: "space-evenly" }}>
-          <Button onClick={saveIngredient} variant="contained">Save</Button>
+          <Button onClick={saveIngredient} variant="contained">{loadingButton ? <CircularProgress size={24} color="inherit" /> : "Save"}</Button>
           <Button onClick={onClose}>Cancel</Button>
         </div>
       </div>
@@ -193,6 +193,7 @@ export default function EnhancedTable() {
   const [ingredientBeingEdited, setIngredientBeingEdited] = useState({});
   const [filterValue, setFilterValue] = useState("");
   const { username } = useSelector((state) => state.token);
+  const [loadingButton, setLoadingButton] = useState(false);
   const [error, setError] = useState({
     nombre: "",
     marca: "",
@@ -224,12 +225,14 @@ export default function EnhancedTable() {
   }
 
   async function saveIngredient() {
-
+    setLoadingButton(true);
     if (error.nombre.length > 0 || error.marca.length > 0 || error.url.length > 0) {
+      setLoadingButton(false);
       return;
     } else {
       if (isIngredientBeingCreated) {
-        await createIngredient(ingredientBeingEdited, setIngredients, setIsIngredientBeingCreated, setOpen, setIngredientBeingEdited, username);
+        await createIngredient(ingredientBeingEdited, setIngredients, setIsIngredientBeingCreated, setOpen, setIngredientBeingEdited, username)
+        .finally(() => setLoadingButton(false));
       } else {
         await updateIngredient(ingredientBeingEdited, setIngredients, setOpen, setIngredientBeingEdited);
       }
@@ -305,7 +308,7 @@ export default function EnhancedTable() {
             onRequestSort={handleRequestSort}
             rowCount={ingredients.length}
           />
-          <EditIngredientDialog open={open} ingredient={ingredientBeingEdited} onClose={handleClose} saveIngredient={saveIngredient} setIngredientBeingEdited={setIngredientBeingEdited} error={error} setError={setError} />
+          <EditIngredientDialog open={open} ingredient={ingredientBeingEdited} onClose={handleClose} saveIngredient={saveIngredient} setIngredientBeingEdited={setIngredientBeingEdited} error={error} setError={setError} loadingButton={loadingButton} setLoadingButton={setLoadingButton}/>
           <TableBody>
             {stableSort(ingredients, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

@@ -1,9 +1,8 @@
-import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import styles from "./Comments.module.css";
 import Comment from "./Comment";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, CircularProgress } from "@mui/material";
 import { useEffect, useState, useMemo } from "react";
 import { fetchData, putEditComment, deleteRating, putLike, validateInput, postRating } from "../../api/ratingsApi";
 
@@ -23,6 +22,7 @@ export default function CommentsList(props) {
   const [currentUserRating, setCurrentUserRating] = useState({});
   const [showEditComment, setShowEditComment] = useState(false);
   const [error, setError] = useState({ newComment: "" });
+  const [loadingButton, setLoadingButton] = useState(false);
 
   useEffect(() => {
     getCurrentRatings();
@@ -77,7 +77,7 @@ export default function CommentsList(props) {
     idRecipe
   ) => {
     if (JSON.stringify(currentUserRating) === "{}") {
-      await postRating(like, commentText, username, idRecipe);
+      await postRating(like, commentText, username, idRecipe).catch((err) => alert(err.response?.status === 429 ? "You exceeded the quota for this resource" : "Something went wrong, please try again later."));
     } else {
       await putEditComment(commentText, currentUserRating);
     }
@@ -149,19 +149,21 @@ export default function CommentsList(props) {
                 ""
               )}
               <Button
-                onClick={() =>
+                onClick={() =>{
+                  setLoadingButton(true);
                   checkPostComment(
                     currentUserRating,
                     like,
                     commentText,
                     username,
                     idRecipe
-                  )
-                }
+                  ).finally(() => setLoadingButton(false))
+                }}
                 className={styles.postButton}
                 variant="contained"
+                disabled={loadingButton}
               >
-                Post
+                {loadingButton ? <CircularProgress size={24} color="inherit" /> : "Post"}
               </Button>
             </div>
           </div>

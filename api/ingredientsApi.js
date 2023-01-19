@@ -63,6 +63,7 @@ export async function createIngredient(body, setIngredients, setIsIngredientBein
     })
     .catch((err) => {
         if (err.response?.status === 403) alert("You can't modify an ingredient that you didn't create.");
+        else if (err.response?.status === 429) alert("You have exceeded the quota for this resource");
         else alert("Something went wrong, please try again later.");
     });
 }
