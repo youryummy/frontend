@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import { fetchRecipeBook, editRecipeBook, fetchRecipe } from "../../api/recipebooksApi";
 import { useRouter } from "next/router";
-import Link from "next/Link";
+import Link from "next/link";
 import { useSelector } from "react-redux";
 
 export default function RecipeBook() {
