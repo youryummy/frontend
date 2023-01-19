@@ -47,7 +47,6 @@ export function editRecipeBook(data) {
 
 
 export function deleteRecipeBook(recipeBookId){
-    console.log("borro aqui "+`${backendUrl}/api/v1/recipesBooks/`+recipeBookId)
     return axios
       .delete(`${backendUrl}/api/v1/recipesBooks/${recipeBookId}`, {withCredentials: true})
       .then(function (response) {
@@ -66,6 +65,8 @@ export function fetchRecipe(recipeId) {
 
 
 export const validateInput = (input, type, setState, setError) => {
+  if (input === "") setError((prev) => ({ ...prev, newName: "Cannot be empty" }));
+  else setError((prev) => ({ ...prev, newName: "" }));
   setState(input);
 };
 

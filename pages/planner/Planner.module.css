@@ -119,4 +119,5 @@
   align-items: center;
   display: flex;
   flex-direction: wrap;
+  flex-wrap: wrap;
 }

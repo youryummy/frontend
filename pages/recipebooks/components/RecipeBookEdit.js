@@ -56,6 +56,7 @@ export default function RecipeBookEdit({
             onChange={(ev) =>
               validateInput(ev.target.value, "newName", setName, setError)
             }
+            error={error.newName?.length > 0}
             helperText={error.newName}
             className={styles.formInput}
             label="Name"
@@ -101,7 +102,11 @@ export default function RecipeBookEdit({
           </div>
           <Button
             onClick={() => {
-              checkSaveRecipeBook(newName, newSummary, currentRecipeBook);
+              if (newName.length > 0) {
+                checkSaveRecipeBook(newName, newSummary, currentRecipeBook);
+              }else{
+                setError({newName: "Name cannot be empty"})
+              }
             }}
             className={styles.saveButton}
             variant="contained"

@@ -134,7 +134,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIngredientBeingEdited, error, setError}) {
+function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIngredientBeingEdited, error, setError }) {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit ingredient</DialogTitle>
@@ -172,8 +172,8 @@ function EditIngredientDialog({ open, onClose, ingredient, saveIngredient, setIn
           helperText={error.url}
         />
       </DialogContent>
-      <div style={{display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px"}}>
-        <div style={{width: "50%", display: "flex", justifyContent: "space-evenly"}}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
+        <div style={{ width: "50%", display: "flex", justifyContent: "space-evenly" }}>
           <Button onClick={saveIngredient} variant="contained">Save</Button>
           <Button onClick={onClose}>Cancel</Button>
         </div>
@@ -202,13 +202,13 @@ export default function EnhancedTable() {
   useEffect(() => {
     fetchData(100, "");
   }, []);
-  
+
   async function fetchData(limit, search) {
     await fetchIngredientsData(limit, search, setIngredients);
   }
 
   const handleAddClick = () => {
-    setIngredientBeingEdited({nombre: "New ingredient", marca: "My brand", url: "http://example.com"});
+    setIngredientBeingEdited({ nombre: "New ingredient", marca: "My brand", url: "http://example.com" });
     setIsIngredientBeingCreated(true);
     setOpen(true);
   }
@@ -217,7 +217,7 @@ export default function EnhancedTable() {
     setIngredientBeingEdited(ingredient);
     setOpen(true);
   }
-  
+
   const handleClose = () => {
     setOpen(false);
     setIngredientBeingEdited({});
@@ -248,7 +248,7 @@ export default function EnhancedTable() {
 
   const handleChangePage = (event, newPage) => {
     if (newPage + 1 === ingredients.length / rowsPerPage) {
-      fetchData(ingredients.length + rowsPerPage * 20 , filterValue).then(() => {
+      fetchData(ingredients.length + rowsPerPage * 20, filterValue).then(() => {
         setPage(newPage);
       });
     } else {
@@ -266,102 +266,107 @@ export default function EnhancedTable() {
 
   return (
     <Item style={{ borderRadius: "20px", height: "auto", padding: "20px", margin: "20px", maxHeight: "800px", overflow: "auto" }}>
-        <TableContainer>
-          <Box style={{display: "flex", alignItems: "flex-end", margin: "0px 50px 0px 0px"}}>
-            <Typography
-              sx={{ flex: '1 1 100%' }}
-              variant="h5"
-              id="tableTitle"
-              component="div"
-              style={{textAlign: "left"}}
-            >
-              Ingredients list
-            </Typography>
-            <div style={{display: "flex", alignItems: "flex-end"}}>
-              <IconButton onClick={handleAddClick.bind(null)} style={{borderRadius: "15px", backgroundColor: "rgba(0, 0, 0, 0.05)", marginRight: "15px", fontSize: "16px", padding: "4px 8px 4px 2px"}}>
-                <AddIcon/> Add ingredient
-              </IconButton>
-              <TextField
-                style={{ width: "300px" }}
-                label="Filter ingredients"
-                value={filterValue}
-                onChange={event => setFilterValue(event.target.value)}
-                onKeyUp={event => {
-                  if (event.key === "Enter") {
-                    fetchData(filterValue === "" ? 100 : ingredients.length, filterValue);
-                  }
-                }}
-              />
-            </div>
-          </Box>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={'medium'}
+      <TableContainer>
+        <Box style={{ display: "flex", alignItems: "flex-end", margin: "0px 50px 0px 0px" }}>
+          <Typography
+            sx={{ flex: '1 1 100%' }}
+            variant="h5"
+            id="tableTitle"
+            component="div"
+            style={{ textAlign: "left" }}
           >
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={ingredients.length}
+            Ingredients list
+          </Typography>
+          <div style={{ display: "flex", alignItems: "flex-end" }}>
+            <IconButton onClick={handleAddClick.bind(null)} style={{ borderRadius: "15px", backgroundColor: "rgba(0, 0, 0, 0.05)", marginRight: "15px", fontSize: "16px", padding: "4px 8px 4px 2px" }}>
+              <AddIcon /> Add ingredient
+            </IconButton>
+            <TextField
+              style={{ width: "300px" }}
+              label="Filter ingredients"
+              value={filterValue}
+              onChange={event => setFilterValue(event.target.value)}
+              onKeyUp={event => {
+                if (event.key === "Enter") {
+                  fetchData(filterValue === "" ? 100 : ingredients.length, filterValue);
+                }
+              }}
             />
-            <EditIngredientDialog open={open} ingredient={ingredientBeingEdited} onClose={handleClose} saveIngredient={saveIngredient} setIngredientBeingEdited={setIngredientBeingEdited} error={error} setError={setError} />
-            <TableBody>
-              {stableSort(ingredients, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((ingredient, index) => {
-                  
-                  const labelId = `enhanced-table-checkbox-${index}`;
+          </div>
+        </Box>
+        <Table
+          sx={{ minWidth: 750 }}
+          aria-labelledby="tableTitle"
+          size={'medium'}
+        >
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            rowCount={ingredients.length}
+          />
+          <EditIngredientDialog open={open} ingredient={ingredientBeingEdited} onClose={handleClose} saveIngredient={saveIngredient} setIngredientBeingEdited={setIngredientBeingEdited} error={error} setError={setError} />
+          <TableBody>
+            {stableSort(ingredients, getComparator(order, orderBy))
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((ingredient, index) => {
 
-                  return (
-                    <TableRow
+                const labelId = `enhanced-table-checkbox-${index}`;
+
+                return (
+                  <TableRow
                     hover
                     tabIndex={-1}
                     key={ingredient._id}
+                  >
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
                     >
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                      >
-                        <a href={ingredient.url}>{ingredient.nombre}</a>
-                      </TableCell>
-                      <TableCell>{ingredient.creado_por}</TableCell>
-                      <TableCell>{ingredient.marca}</TableCell>
-                      <TableCell><img src={ingredient.imagen} alt={ingredient.imagen} style={{height: "150px", width: "150px", objectFit: 'scale-down'}}/></TableCell>
-                      <TableCell>
-                        <IconButton onClick={handleEditClick.bind(null, ingredient)}>
-                          <EditIcon/>
-                        </IconButton>
-                        <IconButton onClick={handleDeleteIngredient.bind(null, ingredient._id)}>
-                          <DeleteIcon/>
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={ingredients.length}
-          rowsPerPage={rowsPerPage}
-          page={ingredients.length <= 0 ? 0 : page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+                      <a href={ingredient.url}>{ingredient.nombre}</a>
+                    </TableCell>
+                    <TableCell>{ingredient.creado_por}</TableCell>
+                    <TableCell>{ingredient.marca}</TableCell>
+                    <TableCell><img src={ingredient.imagen} alt={ingredient.imagen} style={{ height: "150px", width: "150px", objectFit: 'scale-down' }} /></TableCell>
+                    <TableCell>
+                      {username === ingredient.creado_por && (
+                        <>
+                          <IconButton onClick={handleEditClick.bind(null, ingredient)}>
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton onClick={handleDeleteIngredient.bind(null, ingredient._id)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </>
+                      )}
+
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53 * emptyRows,
+                }}
+              >
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={ingredients.length}
+        rowsPerPage={rowsPerPage}
+        page={ingredients.length <= 0 ? 0 : page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Item>
   );
 }
