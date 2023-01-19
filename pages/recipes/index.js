@@ -22,6 +22,8 @@ export default function Recipes() {
 
     const [postData, setPostData] = useState({}); // Object to store data from the form
     const [error, setError] = useState({});
+
+    const [loadingButton, setLoadingButton] = useState(false);
     
     useEffect(() => {
         fetchRecommendedRecipes(username, plan, setRecipes, setLoading)
@@ -90,7 +92,13 @@ export default function Recipes() {
                 <Divider/>
                 <span style={{display: "inline-flex", width: "100%", justifyContent: "space-around", padding: "20px"}}>
                     <Button onClick={() => setPostModal(false)} style={{marginRight: "10px", backgroundColor: "gray"}} variant="contained">Cancel</Button>
-                    <Button onClick={() => postRecipe(postData, username, setError)?.then(() => fetchRecommendedRecipes(username, plan, setRecipes, setLoading)).catch(() => alert("Unexpected error, try again later")).finally(() => setPostModal(false))} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">Publish</Button>
+                    <Button disabled={loadingButton} onClick={() => {setLoadingButton(true); postRecipe(postData, username, setError)?.then(() => {fetchRecommendedRecipes(username, plan, setRecipes, setLoading); setPostModal(false)}).catch((err) => alert(err.response?.status === 429 ? "You exceeded the maximum quota for this resource" : "Unexpected error, try again later")).finally(() => setLoadingButton(false))}} style={{marginRight: "10px", backgroundColor: "#772318"}} variant="contained">
+                        {loadingButton ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            "Publish"
+                        )}
+                    </Button>
                 </span>
                 
                 <Modal open={postIngModal} onClose={() => setPostIngModal(false)}>

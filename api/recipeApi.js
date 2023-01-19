@@ -67,10 +67,28 @@ export function postRecipe(data, username, setError) {
     if (parseInt(data?.duration) < 0) return setError((prev) => ({...prev, duration: "Duration must be greater than zero"}));
     if ((data.summary ?? "").length === 0) return setError((prev) => ({...prev, summary: "Cannot be empty"}));
     
-    // TODO Save image
-    return axios.post(`${backendUrl}recipes`, {...data, createdBy: username}, {withCredentials: true});
+    // Save image
+    if (data.avatar?.file) {
+        const filePath = `/recipes/${Date.now()}-recipe.png`;
+        return axios.post(`${backendUrl}recipes`, {...data, imageUrl: filePath, createdBy: username}, {withCredentials: true}).then(async () => {
+            const base64img = await blobToBase64(data.avatar.file);
+            await axios.post(`/api/saveImage?path=${filePath}`, {image: base64img}, {withCredentials: true}).catch((err) => console.log("Failed to upload image ", err));
+        });
+    } else {
+        return axios.post(`${backendUrl}recipes`, {...data, createdBy: username}, {withCredentials: true});
+    }
+
 }
 
+function blobToBase64(blob) {
+    return new Promise((resolve, _) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+}
+
+  
 export function editRecipe(recipeId, data, setError) {
     if ((data.name ?? "").length === 0) return setError((prev) => ({...prev, name: "Cannot be empty"}));
     if ((data.duration ?? "").length === 0) return setError((prev) => ({...prev, duration: "Cannot be empty"}));
